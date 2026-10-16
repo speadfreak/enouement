@@ -1,0 +1,363 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* ==========================================================================
+   ENOUEMENT 2K27 — Cinematic Design System
+   Colors: Bright Yellow + Vivid Green + Mint on deep green-black / warm cream
+   ========================================================================== */
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-inter);
+  --font-display: var(--font-display);
+  --font-mono: var(--font-geist-mono);
+
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+
+  --color-glow: var(--glow);
+  --color-surface: var(--surface);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+/* ---------- DARK MODE (default — cinematic deep green-black) ---------- */
+:root {
+  --radius: 0.875rem;
+
+  --background: #050a07;
+  --foreground: #f3ffe8;
+  --surface: #0b130e;
+  --card: #0c160f;
+  --card-foreground: #f3ffe8;
+  --popover: #0b130e;
+  --popover-foreground: #f3ffe8;
+
+  --primary: #ffe600;
+  --primary-foreground: #0b130e;
+  --secondary: #00c853;
+  --secondary-foreground: #050a07;
+  --accent: #b9f6ca;
+  --accent-foreground: #0b130e;
+
+  --muted: #131c16;
+  --muted-foreground: #8aa394;
+  --glow: rgba(255, 230, 0, 0.55);
+  --destructive: #ff5a5f;
+  --border: rgba(243, 255, 232, 0.08);
+  --input: rgba(243, 255, 232, 0.1);
+  --ring: #ffe600;
+
+  --chart-1: #ffe600;
+  --chart-2: #00c853;
+  --chart-3: #b9f6ca;
+  --chart-4: #86efac;
+  --chart-5: #fbbf24;
+
+  --sidebar: #0b130e;
+  --sidebar-foreground: #f3ffe8;
+  --sidebar-primary: #ffe600;
+  --sidebar-primary-foreground: #0b130e;
+  --sidebar-accent: #131c16;
+  --sidebar-accent-foreground: #f3ffe8;
+  --sidebar-border: rgba(243, 255, 232, 0.08);
+  --sidebar-ring: #ffe600;
+
+  color-scheme: dark;
+}
+
+/* ---------- LIGHT MODE (warm cream + cinematic accents) ---------- */
+.light {
+  --background: #fbfff4;
+  --foreground: #0b130e;
+  --surface: #f4faee;
+  --card: #ffffff;
+  --card-foreground: #0b130e;
+  --popover: #ffffff;
+  --popover-foreground: #0b130e;
+
+  --primary: #ffd60a;
+  --primary-foreground: #0b130e;
+  --secondary: #00c853;
+  --secondary-foreground: #fbfff4;
+  --accent: #86efac;
+  --accent-foreground: #0b130e;
+
+  --muted: #eef5e6;
+  --muted-foreground: #5a6b5f;
+  --glow: rgba(255, 214, 10, 0.5);
+  --destructive: #dc2626;
+  --border: rgba(11, 19, 14, 0.1);
+  --input: rgba(11, 19, 14, 0.08);
+  --ring: #16a34a;
+
+  --chart-1: #ffd60a;
+  --chart-2: #16a34a;
+  --chart-3: #86efac;
+  --chart-4: #00c853;
+  --chart-5: #f59e0b;
+
+  --sidebar: #f4faee;
+  --sidebar-foreground: #0b130e;
+  --sidebar-primary: #ffd60a;
+  --sidebar-primary-foreground: #0b130e;
+  --sidebar-accent: #eef5e6;
+  --sidebar-accent-foreground: #0b130e;
+  --sidebar-border: rgba(11, 19, 14, 0.1);
+  --sidebar-ring: #16a34a;
+
+  color-scheme: light;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "ss01", "cv01", "cv03";
+    overflow-x: hidden;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  ::selection {
+    background: var(--primary);
+    color: var(--primary-foreground);
+  }
+  h1, h2, h3, h4, h5 {
+    font-family: var(--font-display);
+    letter-spacing: -0.03em;
+    line-height: 0.95;
+  }
+}
+
+/* ==========================================================================
+   Custom scrollbar
+   ========================================================================== */
+::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+}
+::-webkit-scrollbar-track {
+  background: var(--surface);
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--primary), var(--secondary));
+  border-radius: 99px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
+}
+
+/* ==========================================================================
+   Utility classes
+   ========================================================================== */
+
+/* Gradient text */
+.text-gradient {
+  background: linear-gradient(110deg, var(--primary) 0%, var(--secondary) 55%, var(--accent) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+.text-gradient-yellow {
+  background: linear-gradient(110deg, #ffe600, #ffd60a 60%, #fff7c2);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+/* Glow effects */
+.glow-primary {
+  box-shadow: 0 0 30px -5px var(--glow), 0 0 60px -20px var(--glow);
+}
+.glow-text {
+  text-shadow: 0 0 24px var(--glow), 0 0 60px rgba(255, 230, 0, 0.3);
+}
+.glow-green {
+  box-shadow: 0 0 40px -8px rgba(0, 200, 83, 0.45);
+}
+
+/* Glass cards */
+.glass {
+  background: color-mix(in srgb, var(--card) 60%, transparent);
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  border: 1px solid var(--border);
+}
+.glass-strong {
+  background: color-mix(in srgb, var(--card) 78%, transparent);
+  backdrop-filter: blur(28px) saturate(160%);
+  -webkit-backdrop-filter: blur(28px) saturate(160%);
+  border: 1px solid var(--border);
+}
+
+/* Gradient border */
+.gradient-border {
+  position: relative;
+  background: var(--card);
+  border-radius: var(--radius);
+}
+.gradient-border::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(130deg, var(--primary), var(--secondary), var(--accent));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* Grain overlay */
+.grain::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  mix-blend-mode: overlay;
+}
+
+/* Aurora background blobs */
+.aurora {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.5;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Marquee */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.animate-marquee {
+  animation: marquee 30s linear infinite;
+}
+
+/* Shimmer */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.shimmer {
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--primary) 30%, transparent), transparent);
+  background-size: 200% 100%;
+  animation: shimmer 2.5s linear infinite;
+}
+
+/* Floating */
+@keyframes floaty {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-14px) rotate(2deg); }
+}
+.animate-floaty { animation: floaty 6s ease-in-out infinite; }
+
+/* Pulse glow */
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 0 var(--glow); }
+  50% { box-shadow: 0 0 30px 6px var(--glow); }
+}
+.animate-pulse-glow { animation: pulse-glow 3s ease-in-out infinite; }
+
+/* Reveal mask for text */
+.reveal-mask {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+}
+
+/* Hide scrollbar for horizontal scrollers */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Safe area */
+.safe-b { padding-bottom: env(safe-area-inset-bottom); }
+.safe-t { padding-top: env(safe-area-inset-top); }
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Custom cursor */
+.cursor-dot, .cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  mix-blend-mode: difference;
+}
+.cursor-dot {
+  width: 7px;
+  height: 7px;
+  background: var(--primary);
+  transform: translate(-50%, -50%);
+}
+.cursor-ring {
+  width: 38px;
+  height: 38px;
+  border: 1.5px solid var(--primary);
+  transform: translate(-50%, -50%);
+  transition: width 0.2s, height 0.2s, background 0.2s;
+}
+@media (hover: none) {
+  .cursor-dot, .cursor-ring { display: none; }
+}

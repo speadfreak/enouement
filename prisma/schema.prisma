@@ -1,0 +1,387 @@
+// ============================================================================
+// ENOUEMENT 2K27 — Prisma schema (Neon PostgreSQL)
+// ============================================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ---------------------------------------------------------------------------
+// Auth & users
+// ---------------------------------------------------------------------------
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String?
+  passwordHash String?
+  role         Role     @default(ADMIN)
+  active       Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  accounts Account[]
+  sessions Session[]
+  auditLogs AuditLog[]
+
+  @@map("users")
+}
+
+enum Role {
+  SUPER_ADMIN
+  ADMIN
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+// ---------------------------------------------------------------------------
+// Site settings & navigation
+// ---------------------------------------------------------------------------
+
+model SiteSetting {
+  id            String   @id @default("site")
+  siteName      String   @default("Enouement 2K27")
+  tagline       String   @default("The Final Chapter — Class of 2027")
+  description   String   @default("A cinematic memory of the senior batch, class of 2027, Ethiopia.")
+  logoUrl       String?
+  faviconUrl    String?
+  ogImageUrl    String?
+  primaryColor  String   @default("#FFE600")
+  secondaryColor String  @default("#00C853")
+  reduceMotionDefault Boolean @default(false)
+  countdownLabel String  @default("Graduation Day")
+  countdownDate DateTime?
+  socialLinks   Json     @default("{}")
+  contactInfo   Json     @default("{}")
+  footerText    String   @default("Enouement 2K27 — Class of 2027. Made with love.")
+  updatedAt     DateTime @updatedAt
+
+  @@map("site_settings")
+}
+
+model NavLink {
+  id       String  @id @default(cuid())
+  label    String
+  href     String
+  icon     String?
+  order    Int     @default(0)
+  visible  Boolean @default(true)
+  newTab   Boolean @default(false)
+
+  @@map("nav_links")
+  @@index([order])
+}
+
+// ---------------------------------------------------------------------------
+// Hero
+// ---------------------------------------------------------------------------
+
+model HeroMedia {
+  id         String  @id @default(cuid())
+  type       String  @default("image") // image | video
+  url        String
+  posterUrl  String?
+  title      String?
+  duration   Int     @default(6000)
+  transition String  @default("fade") // fade | zoom | slide
+  order      Int     @default(0)
+  enabled    Boolean @default(true)
+  createdAt  DateTime @default(now())
+
+  @@map("hero_media")
+  @@index([order])
+}
+
+// ---------------------------------------------------------------------------
+// Story
+// ---------------------------------------------------------------------------
+
+model StoryChapter {
+  id        String   @id @default(cuid())
+  title     String
+  subtitle  String?
+  body      String
+  coverUrl  String?
+  year      String?
+  order     Int      @default(0)
+  published Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("story_chapters")
+  @@index([order])
+}
+
+// ---------------------------------------------------------------------------
+// Live Feed ("Moments")
+// ---------------------------------------------------------------------------
+
+model Post {
+  id          String   @id @default(cuid())
+  caption     String
+  tags        String[] @default([])
+  mediaUrls   String[] @default([])
+  mediaType   String   @default("image") // image | video | mixed
+  pinned      Boolean  @default(false)
+  published   Boolean  @default(true)
+  authorName  String   @default("Enouement 2K27")
+  likeCount   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  reactions Reaction[]
+
+  @@map("posts")
+  @@index([createdAt])
+  @@index([pinned])
+}
+
+model Reaction {
+  id        String   @id @default(cuid())
+  postId    String
+  fingerprint String
+  createdAt DateTime @default(now())
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, fingerprint])
+  @@map("reactions")
+}
+
+// ---------------------------------------------------------------------------
+// Gallery
+// ---------------------------------------------------------------------------
+
+model Album {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  coverUrl    String?
+  category    String   @default("events") // events | class | sports | trips | senior
+  order       Int      @default(0)
+  published   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  media       Media[]
+
+  @@map("albums")
+  @@index([category])
+}
+
+model Media {
+  id        String   @id @default(cuid())
+  albumId   String?
+  url       String
+  type      String   @default("image") // image | video
+  title     String?
+  width     Int?
+  height    Int?
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  album     Album?   @relation(fields: [albumId], references: [id], onDelete: Cascade)
+
+  @@map("media")
+  @@index([albumId])
+}
+
+// ---------------------------------------------------------------------------
+// Merch / Clothes
+// ---------------------------------------------------------------------------
+
+model MerchItem {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  price       Float?
+  imageUrls   String[] @default([])
+  colors      String[] @default([])
+  sizes       String[] @default([])
+  details     String?
+  featured    Boolean  @default(false)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("merch_items")
+}
+
+// ---------------------------------------------------------------------------
+// Announcements / News
+// ---------------------------------------------------------------------------
+
+model Announcement {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  excerpt     String?
+  body        String
+  coverUrl    String?
+  category    String   @default("news")
+  pinned      Boolean  @default(false)
+  urgent      Boolean  @default(false)
+  published   Boolean  @default(true)
+  publishAt   DateTime @default(now())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("announcements")
+  @@index([publishAt])
+  @@index([pinned])
+}
+
+// ---------------------------------------------------------------------------
+// Events
+// ---------------------------------------------------------------------------
+
+model Event {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  description String?
+  body        String?
+  coverUrl    String?
+  location    String?
+  startDate   DateTime
+  endDate     DateTime?
+  category    String   @default("special") // senior | farewell | graduation | special
+  published   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("events")
+  @@index([startDate])
+}
+
+// ---------------------------------------------------------------------------
+// Graduation
+// ---------------------------------------------------------------------------
+
+model GraduationContent {
+  id              String   @id @default("graduation")
+  headline        String   @default("The Walk")
+  intro           String   @default("The day we've been waiting for.")
+  countdownDate   DateTime?
+  program         Json     @default("[]")
+  thankYouText    String?
+  memoriesGallery String[] @default([])
+  updatedAt       DateTime @updatedAt
+
+  @@map("graduation_content")
+}
+
+model Student {
+  id          String   @id @default(cuid())
+  name        String
+  photoUrl    String?
+  quote       String?
+  futurePlan  String?
+  nickname    String?
+  section     String?
+  club        String?
+  order       Int      @default(0)
+  featured    Boolean  @default(false)
+  published   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("students")
+  @@index([order])
+}
+
+// ---------------------------------------------------------------------------
+// Videos
+// ---------------------------------------------------------------------------
+
+model Video {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  url         String   // embed or hosted url
+  posterUrl   String?
+  category    String   @default("event")
+  duration    String?
+  featured    Boolean  @default(false)
+  published   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("videos")
+  @@index([category])
+}
+
+// ---------------------------------------------------------------------------
+// Contact messages
+// ---------------------------------------------------------------------------
+
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  subject   String?
+  message   String
+  handled   Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@map("contact_messages")
+  @@index([createdAt])
+}
+
+// ---------------------------------------------------------------------------
+// Audit log
+// ---------------------------------------------------------------------------
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  action    String
+  entity    String
+  entityId  String?
+  meta      Json?
+  createdAt DateTime @default(now())
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@map("audit_logs")
+  @@index([createdAt])
+}
