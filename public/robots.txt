@@ -1,6 +1,0 @@
-User-agent: *
-Allow: /
-Disallow: /admin
-Disallow: /api/admin
-
-Sitemap: https://enouement2k27.et/sitemap.xml
