@@ -11,6 +11,25 @@ import { Label } from "@/components/ui/label";
 import { ArrowRight, ArrowLeft, Sparkles, Eye, EyeOff } from "lucide-react";
 
 export default function AdminLoginPage() {
+  return (
+    <React.Suspense fallback={<LoginFallback />}>
+      <LoginForm />
+    </React.Suspense>
+  );
+}
+
+function LoginFallback() {
+  return (
+    <div className="grid min-h-[100dvh] place-items-center bg-background">
+      <div className="flex items-center gap-3">
+        <div className="h-3 w-3 animate-pulse rounded-full bg-primary" />
+        <span className="text-sm text-muted-foreground">Loading…</span>
+      </div>
+    </div>
+  );
+}
+
+function LoginForm() {
   const router = useRouter();
   const search = useSearchParams();
   const [email, setEmail] = React.useState("");
