@@ -61,7 +61,7 @@ export function SingleRecordForm({
     reset,
     formState: { errors, isSubmitting },
   } = useForm({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(schema as any),
     defaultValues: defaults,
   });
 

@@ -10,7 +10,7 @@ const schema = z.object({
   countdownDate: z.string().optional().nullable(),
   program: z.string().optional().default("[]"),
   thankYouText: z.string().optional().nullable(),
-  memoriesGallery: z.string().transform((v) => v.split(",").map((s) => s.trim()).filter(Boolean)).optional().default(""),
+  memoriesGallery: z.string().transform((v) => v.split(",").map((s) => s.trim()).filter(Boolean)).optional().default([]),
 });
 
 function safeJson(s: string | undefined, fallback: any) {

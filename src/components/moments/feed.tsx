@@ -393,7 +393,7 @@ export function Feed({ initialItems, initialCursor }: Props) {
         items={items}
         index={activeIndex}
         onClose={() => setActiveId(null)}
-        onIndexChange={setActiveId}
+        onIndexChange={(i) => setActiveId(items[i]?.id ?? null)}
       />
     </div>
   );

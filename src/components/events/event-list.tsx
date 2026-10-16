@@ -569,7 +569,7 @@ export function EventList({ events }: { events: EventItem[] }) {
       </div>
 
       <TabsContent value="timeline">
-        <Timeline events={events} reduce={false} />
+        <Timeline events={events} />
       </TabsContent>
       <TabsContent value="calendar">
         <CalendarView events={events} />

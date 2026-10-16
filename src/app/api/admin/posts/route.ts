@@ -6,8 +6,8 @@ import { handleErr, ok, bad, parseBody } from "@/lib/admin-route";
 
 const schema = z.object({
   caption: z.string().min(1, "Caption is required"),
-  tags: z.string().transform((v) => v.split(",").map((s) => s.trim()).filter(Boolean)).default(""),
-  mediaUrls: z.string().transform((v) => v.split(",").map((s) => s.trim()).filter(Boolean)).default(""),
+  tags: z.string().transform((v) => v.split(",").map((s) => s.trim()).filter(Boolean)).default([]),
+  mediaUrls: z.string().transform((v) => v.split(",").map((s) => s.trim()).filter(Boolean)).default([]),
   mediaType: z.enum(["image", "video", "mixed"]).default("image"),
   pinned: z.boolean().default(false),
   published: z.boolean().default(true),

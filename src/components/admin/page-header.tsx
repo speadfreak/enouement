@@ -44,7 +44,7 @@ export function ConfirmDelete({
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onConfirm: () => void | Promise<void>;
+  onConfirm: () => unknown;
   title?: string;
   description?: string;
   confirmLabel?: string;

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import type { ZodTypeAny } from "zod";
+import { z } from "zod";
 
 /** JSON success response */
 export function ok<T>(data: T, status = 200) {
@@ -11,8 +11,12 @@ export function bad(msg: string, status = 400) {
   return NextResponse.json({ error: msg }, { status });
 }
 
-/** Parse + validate a JSON request body with a zod schema */
-export async function parseBody<T>(req: Request, schema: ZodTypeAny): Promise<{ ok: true; data: T } | { ok: false; error: any }> {
+/** Parse + validate a JSON request body with a zod schema.
+ *  Generic over the schema so the inferred output type flows to callers. */
+export async function parseBody<S extends z.ZodTypeAny>(
+  req: Request,
+  schema: S
+): Promise<{ ok: true; data: z.infer<S> } | { ok: false; error: any }> {
   let body: unknown;
   try {
     body = await req.json();
@@ -23,7 +27,7 @@ export async function parseBody<T>(req: Request, schema: ZodTypeAny): Promise<{ 
   if (!result.success) {
     return { ok: false, error: result.error.flatten() };
   }
-  return { ok: true, data: result.data as T };
+  return { ok: true, data: result.data };
 }
 
 /** Convert a string to a URL-safe slug */
