@@ -10,14 +10,22 @@ async function main() {
   console.log("🌱 Seeding Enouement 2K27...\n");
 
   // --- Super admin ---
-  const email = process.env.SUPER_ADMIN_EMAIL || "admin@enouement2k27.et";
-  const password = process.env.SUPER_ADMIN_PASSWORD || "Enouement@2K27!Super";
+  // Credentials MUST come from env vars. Never hardcode defaults.
+  const email = process.env.SUPER_ADMIN_EMAIL;
+  const password = process.env.SUPER_ADMIN_PASSWORD;
+  if (!email || !password) {
+    console.error(
+      "\n❌ SUPER_ADMIN_EMAIL and SUPER_ADMIN_PASSWORD env vars are required to seed.\n" +
+        "   Copy .env.example to .env and fill them in, then re-run `bun run seed`.\n"
+    );
+    process.exit(1);
+  }
   const passwordHash = await bcrypt.hash(password, 12);
 
   await db.user.upsert({
     where: { email },
     update: { passwordHash, role: Role.SUPER_ADMIN, active: true },
-    create: { email, name: "Super Admin", passwordHash, role: Role.SUPER_ADMIN, active: true },
+    create: { email, name: "Super Admin", passwordHash, role: Role.SUPER_ADMIN, active: true, mustChangePassword: true },
   });
   console.log(`  ✓ Super admin → ${email}`);
 

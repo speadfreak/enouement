@@ -16,6 +16,9 @@ export default async function AdminPanelLayout({ children }: { children: React.R
   const user = await getCurrentUser();
   if (!user) redirect("/admin/login");
 
+  // Force password change on first login or after admin reset
+  if (user.mustChangePassword) redirect("/admin/change-password");
+
   return (
     <AdminShell email={user.email ?? ""} role={(user.role as Role) ?? Role.ADMIN}>
       {children}
