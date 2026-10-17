@@ -64,6 +64,9 @@ git push -u origin main
 | `NEXT_PUBLIC_SITE_URL` | `https://your-app.vercel.app` |
 | `SUPER_ADMIN_EMAIL` | your admin email (only needed if you re-run seed) |
 | `SUPER_ADMIN_PASSWORD` | your admin password (only needed if you re-run seed) |
+| `CLOUDINARY_CLOUD_NAME` | **required for uploads** — from cloudinary.com dashboard |
+| `CLOUDINARY_API_KEY` | **required for uploads** — from cloudinary.com dashboard |
+| `CLOUDINARY_API_SECRET` | **required for uploads** — from cloudinary.com dashboard |
 
 5. Click **Deploy**. Vercel builds with `next build` automatically.
 6. Once deployed, if `NEXTAUTH_URL` didn't match, update it to your final Vercel URL and redeploy.
@@ -89,10 +92,16 @@ git push -u origin main
 ---
 
 ## 7. Image / Video uploads
-This build uses **SmartImage** with graceful gradient fallbacks, so the site looks full even before you upload real media. To upload real images/videos via the admin panel:
+This build uses **SmartImage** with graceful gradient fallbacks, so the site looks full even before you upload real media. To upload real images/videos via the admin panel, you **must configure Cloudinary** — the admin uploader signs uploads on the server and sends files **directly from the browser** to Cloudinary, bypassing Vercel's 4.5MB serverless body limit so even large videos (up to 500MB) work.
 
-- **Option A (simplest):** paste image URLs (e.g. from Imgur, Cloudinary, or your own CDN) into the URL fields in each manager. The `next.config.ts` already allows common remote hosts.
-- **Option B (Cloudinary):** uncomment the Cloudinary env vars in `.env.example`, set them in Vercel, and wire a `/api/upload` route using the Cloudinary SDK. (Left as a next step — see README "Suggested upgrades".)
+1. Create a free account at **cloudinary.com**.
+2. From your dashboard, copy `Cloud Name`, `API Key`, and `API Secret`.
+3. Add them as Vercel env vars: `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET`.
+4. Redeploy. The admin upload buttons will now work.
+
+**Why no fallback?** Storing large files (especially videos) as base64 in Neon would fill the free database instantly. Cloudinary's free tier (25GB storage, 25 credits/month) is more than enough for a senior batch site. Without Cloudinary configured, the upload button shows a clear error explaining what to set up.
+
+You can also paste external image/video URLs directly into the "Paste URL" tab of any media field — useful for embedding YouTube videos or using images hosted elsewhere.
 
 ---
 

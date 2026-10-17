@@ -28,6 +28,10 @@ const ACCEPT_MAP: Record<MediaAccept, string> = {
   both: "image/*,video/*",
 };
 
+const MAX_IMAGE_BYTES = 8 * 1024 * 1024; // 8 MB
+const MAX_VIDEO_BYTES = 500 * 1024 * 1024; // 500 MB
+const CHUNK_SIZE = 5 * 1024 * 1024; // 5 MB chunks for large videos
+
 function fileTypeKind(file: File): MediaType | null {
   if (file.type.startsWith("image/")) return "image";
   if (file.type.startsWith("video/")) return "video";
@@ -46,21 +50,50 @@ function formatBytes(n: number): string {
   return `${(n / (1024 * 1024)).toFixed(1)} MB`;
 }
 
+// ---------- Signing response from /api/upload ----------
+interface SignResponse {
+  signature: string;
+  timestamp: number;
+  apiKey: string;
+  cloudName: string;
+  folder: string;
+  resourceType: "image" | "video";
+  maxImageBytes: number;
+  maxVideoBytes: number;
+}
+
 interface UploadResult {
   url: string;
+  publicId?: string;
   type: MediaType;
 }
 
-/** Upload a File to /api/upload with XHR so we can report progress. */
-function uploadFile(
-  file: File,
-  folder: string,
+/** Fetch a signed upload payload from our server (admin-only). */
+async function fetchSign(folder: string, resourceType: MediaType): Promise<SignResponse> {
+  const res = await fetch("/api/upload", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ folder, resourceType }),
+  });
+  const data = await res.json();
+  if (!res.ok) {
+    throw new Error(data.error || `Signing failed (${res.status})`);
+  }
+  return data as SignResponse;
+}
+
+/** Upload a single file directly to Cloudinary (bypasses our server). */
+function uploadToCloudinary(
+  file: File | Blob,
+  sign: SignResponse,
   onProgress: (p: number) => void,
   signal?: AbortSignal
 ): Promise<UploadResult> {
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
-    xhr.open("POST", "/api/upload");
+    const url = `https://api.cloudinary.com/v1_1/${sign.cloudName}/${sign.resourceType}/upload`;
+
+    xhr.open("POST", url);
     if (signal) {
       signal.addEventListener("abort", () => {
         xhr.abort();
@@ -75,29 +108,134 @@ function uploadFile(
     xhr.onload = () => {
       try {
         const json = JSON.parse(xhr.responseText || "{}");
-        if (xhr.status >= 200 && xhr.status < 300 && json.url) {
+        if (xhr.status >= 200 && xhr.status < 300 && json.secure_url) {
           resolve({
-            url: json.url as string,
-            type: json.type === "video" ? "video" : "image",
+            url: json.secure_url as string,
+            publicId: json.public_id as string | undefined,
+            type: sign.resourceType,
           });
         } else {
-          reject(new Error(json.error || `Upload failed (${xhr.status})`));
+          reject(new Error(json.error?.message || `Upload failed (${xhr.status})`));
         }
       } catch {
-        reject(new Error("Invalid server response"));
+        reject(new Error("Invalid Cloudinary response"));
       }
     };
     xhr.onerror = () => reject(new Error("Network error during upload"));
+
     const fd = new FormData();
     fd.append("file", file);
-    fd.append("folder", folder);
+    fd.append("signature", sign.signature);
+    fd.append("timestamp", String(sign.timestamp));
+    fd.append("api_key", sign.apiKey);
+    fd.append("folder", sign.folder);
     xhr.send(fd);
   });
 }
 
+/** Upload a large video in chunks (Cloudinary chunked upload API). */
+function uploadChunkedToCloudinary(
+  file: File,
+  sign: SignResponse,
+  onProgress: (p: number) => void,
+  signal?: AbortSignal
+): Promise<UploadResult> {
+  return new Promise((resolve, reject) => {
+    const url = `https://api.cloudinary.com/v1_1/${sign.cloudName}/${sign.resourceType}/upload`;
+    const total = file.size;
+    const uploadId = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    const chunkSize = CHUNK_SIZE;
+    let start = 0;
+    let chunkIndex = 0;
+    const totalChunks = Math.ceil(total / chunkSize);
+
+    const sendNext = () => {
+      if (start >= total) return;
+      const end = Math.min(start + chunkSize, total);
+      const chunk = file.slice(start, end);
+      const contentRange = `bytes ${start}-${end - 1}/${total}`;
+
+      const xhr = new XMLHttpRequest();
+      xhr.open("POST", url);
+      xhr.setRequestHeader("X-Unique-Upload-Id", uploadId);
+      xhr.setRequestHeader("Content-Range", contentRange);
+
+      if (signal) {
+        signal.addEventListener("abort", () => xhr.abort(), { once: true });
+      }
+
+      xhr.onload = () => {
+        if (xhr.status >= 200 && xhr.status < 300) {
+          // Update progress based on completed chunks
+          onProgress(Math.round((end / total) * 100));
+          chunkIndex++;
+          start = end;
+
+          if (start >= total) {
+            // Last chunk — response contains the asset
+            try {
+              const json = JSON.parse(xhr.responseText || "{}");
+              if (json.secure_url) {
+                resolve({
+                  url: json.secure_url as string,
+                  publicId: json.public_id as string | undefined,
+                  type: sign.resourceType,
+                });
+              } else {
+                resolve({ url: "", type: sign.resourceType });
+              }
+            } catch {
+              reject(new Error("Invalid Cloudinary response on final chunk"));
+            }
+          } else {
+            sendNext();
+          }
+        } else {
+          try {
+            const json = JSON.parse(xhr.responseText || "{}");
+            reject(new Error(json.error?.message || `Chunk ${chunkIndex + 1} failed (${xhr.status})`));
+          } catch {
+            reject(new Error(`Chunk ${chunkIndex + 1} failed (${xhr.status})`));
+          }
+        }
+      };
+      xhr.onerror = () => reject(new Error(`Network error on chunk ${chunkIndex + 1}/${totalChunks}`));
+
+      const fd = new FormData();
+      fd.append("file", chunk, file.name || `chunk-${chunkIndex}`);
+      fd.append("signature", sign.signature);
+      fd.append("timestamp", String(sign.timestamp));
+      fd.append("api_key", sign.apiKey);
+      fd.append("folder", sign.folder);
+      xhr.send(fd);
+    };
+
+    sendNext();
+  });
+}
+
+/** Main upload entry: signs, then uploads directly to Cloudinary. */
+async function uploadFile(
+  file: File,
+  folder: string,
+  onProgress: (p: number) => void,
+  signal?: AbortSignal
+): Promise<UploadResult> {
+  const kind = fileTypeKind(file) ?? "image";
+  const resourceType: MediaType = kind === "video" ? "video" : "image";
+  const sign = await fetchSign(folder, resourceType);
+
+  // Use chunked upload for large videos (>100MB)
+  if (resourceType === "video" && file.size > 100 * 1024 * 1024) {
+    return uploadChunkedToCloudinary(file, sign, onProgress, signal);
+  }
+  return uploadToCloudinary(file, sign, onProgress, signal);
+}
+
 /**
  * Single-file drag-and-drop uploader. Compresses images client-side via
- * browser-image-compression before POSTing to /api/upload.
+ * browser-image-compression, then uploads DIRECTLY to Cloudinary (signed by
+ * our server) — the file never touches our serverless function.
  */
 export function MediaUploader({
   value,
@@ -129,6 +267,15 @@ export function MediaUploader({
       toast.error(`This field expects ${accept} files.`);
       return;
     }
+    // Size check
+    const maxBytes = kind === "image" ? MAX_IMAGE_BYTES : MAX_VIDEO_BYTES;
+    if (file.size > maxBytes) {
+      toast.error(
+        `File too large. Max ${kind === "image" ? "8MB" : "500MB"} for ${kind}s.`
+      );
+      return;
+    }
+
     setSelected({ name: file.name, size: file.size });
     setProgress(0);
     setUploading(true);
@@ -267,8 +414,8 @@ export function MediaUploader({
               {accept === "image"
                 ? "PNG, JPG, WebP, GIF · up to 8MB · auto-compressed"
                 : accept === "video"
-                  ? "MP4, WebM · up to 60MB"
-                  : "Images (8MB) or videos (60MB)"}
+                  ? "MP4, WebM · up to 500MB · direct to Cloudinary"
+                  : "Images (8MB) or videos (500MB)"}
             </p>
           </div>
         </button>
