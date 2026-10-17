@@ -25,6 +25,7 @@ import {
   Moon,
   Sun,
   ExternalLink,
+  PanelTop,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
@@ -54,6 +55,7 @@ const NAV: NavItem[] = [
   { href: "/admin/seniors", label: "Seniors", icon: Users2 },
   { href: "/admin/videos", label: "Videos", icon: Video },
   { href: "/admin/messages", label: "Messages", icon: Mail },
+  { href: "/admin/footer", label: "Footer & Developer", icon: PanelTop },
   { href: "/admin/users", label: "Users", icon: ScrollText, superOnly: true },
   { href: "/admin/audit", label: "Audit Log", icon: ScrollText },
 ];
