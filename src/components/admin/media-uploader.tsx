@@ -28,30 +28,35 @@ const ACCEPT_MAP: Record<MediaAccept, string> = {
   both: "image/*,video/*",
 };
 
-const MAX_IMAGE_BYTES = 8 * 1024 * 1024; // 8 MB
-const MAX_VIDEO_BYTES = 500 * 1024 * 1024; // 500 MB
+/** Max image size (8 MB) enforced client-side. */
+export const MAX_IMAGE_BYTES = 8 * 1024 * 1024; // 8 MB
+/** Max video size (500 MB) enforced client-side, chunked upload. */
+export const MAX_VIDEO_BYTES = 500 * 1024 * 1024; // 500 MB
 const CHUNK_SIZE = 5 * 1024 * 1024; // 5 MB chunks for large videos
 
-function fileTypeKind(file: File): MediaType | null {
+/** Detect whether a File is an image or a video (or neither). */
+export function fileTypeKind(file: File): MediaType | null {
   if (file.type.startsWith("image/")) return "image";
   if (file.type.startsWith("video/")) return "video";
   return null;
 }
 
-function isVideoUrl(url: string): boolean {
+/** True if the URL points to a video file (or is a data:video URL). */
+export function isVideoUrl(url: string): boolean {
   if (!url) return false;
   if (url.startsWith("data:video")) return true;
   return /\.(mp4|webm|ogg|mov|m4v)$/i.test(url);
 }
 
-function formatBytes(n: number): string {
+/** Human-readable byte size formatter (e.g. 12.4 MB). */
+export function formatBytes(n: number): string {
   if (n < 1024) return `${n} B`;
   if (n < 1024 * 1024) return `${(n / 1024).toFixed(1)} KB`;
   return `${(n / (1024 * 1024)).toFixed(1)} MB`;
 }
 
 // ---------- Signing response from /api/upload ----------
-interface SignResponse {
+export interface SignResponse {
   signature: string;
   timestamp: number;
   apiKey: string;
@@ -62,14 +67,14 @@ interface SignResponse {
   maxVideoBytes: number;
 }
 
-interface UploadResult {
+export interface UploadResult {
   url: string;
   publicId?: string;
   type: MediaType;
 }
 
 /** Fetch a signed upload payload from our server (admin-only). */
-async function fetchSign(folder: string, resourceType: MediaType): Promise<SignResponse> {
+export async function fetchSign(folder: string, resourceType: MediaType): Promise<SignResponse> {
   const res = await fetch("/api/upload", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -83,7 +88,7 @@ async function fetchSign(folder: string, resourceType: MediaType): Promise<SignR
 }
 
 /** Upload a single file directly to Cloudinary (bypasses our server). */
-function uploadToCloudinary(
+export function uploadToCloudinary(
   file: File | Blob,
   sign: SignResponse,
   onProgress: (p: number) => void,
@@ -134,7 +139,7 @@ function uploadToCloudinary(
 }
 
 /** Upload a large video in chunks (Cloudinary chunked upload API). */
-function uploadChunkedToCloudinary(
+export function uploadChunkedToCloudinary(
   file: File,
   sign: SignResponse,
   onProgress: (p: number) => void,
@@ -215,7 +220,7 @@ function uploadChunkedToCloudinary(
 }
 
 /** Main upload entry: signs, then uploads directly to Cloudinary. */
-async function uploadFile(
+export async function uploadFile(
   file: File,
   folder: string,
   onProgress: (p: number) => void,

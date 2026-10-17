@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -27,7 +28,9 @@ import { DataTable, type Column } from "@/components/admin/data-table";
 import { ResourceForm, type FieldConfig } from "@/components/admin/resource-form";
 import { ConfirmDelete, PageHeader } from "@/components/admin/page-header";
 import { MediaUploader, type MediaType } from "@/components/admin/media-uploader";
-import { Plus, Images, Trash2 } from "lucide-react";
+import { BulkMediaUploader } from "@/components/admin/bulk-media-uploader";
+import { cn } from "@/lib/utils";
+import { Plus, Images, Trash2, Layers } from "lucide-react";
 
 type Media = {
   id: string;
@@ -262,6 +265,8 @@ function AlbumMediaDialog({ album, onClose, onChanged }: { album: Album; onClose
   const [url, setUrl] = React.useState("");
   const [type, setType] = React.useState<"image" | "video">("image");
   const [adding, setAdding] = React.useState(false);
+  const [selected, setSelected] = React.useState<Set<string>>(new Set());
+  const [bulkDeleting, setBulkDeleting] = React.useState(false);
 
   const media = album.media ?? [];
 
@@ -298,7 +303,54 @@ function AlbumMediaDialog({ album, onClose, onChanged }: { album: Album; onClose
       return;
     }
     toast.success("Media removed.");
+    // Keep selection state in sync.
+    setSelected((prev) => {
+      if (!prev.has(mediaId)) return prev;
+      const next = new Set(prev);
+      next.delete(mediaId);
+      return next;
+    });
     onChanged();
+  };
+
+  const toggleSel = (id: string) => {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const allSelected = media.length > 0 && selected.size === media.length;
+  const toggleAll = () => {
+    if (allSelected) setSelected(new Set());
+    else setSelected(new Set(media.map((m) => m.id)));
+  };
+
+  const bulkDelete = async () => {
+    if (selected.size === 0) return;
+    setBulkDeleting(true);
+    try {
+      const r = await fetch(`/api/admin/albums/${album.id}/media/bulk-delete`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ids: Array.from(selected) }),
+      });
+      if (!r.ok) {
+        const e = await r.json().catch(() => null);
+        throw new Error(e?.error || "Failed to delete media");
+      }
+      const data = await r.json().catch(() => ({}));
+      const deleted = typeof data?.deleted === "number" ? data.deleted : selected.size;
+      toast.success(`Deleted ${deleted} media.`);
+      setSelected(new Set());
+      onChanged();
+    } catch (e: any) {
+      toast.error(e.message);
+    } finally {
+      setBulkDeleting(false);
+    }
   };
 
   return (
@@ -309,14 +361,29 @@ function AlbumMediaDialog({ album, onClose, onChanged }: { album: Album; onClose
           <DialogDescription>Upload files from your device or paste an image / video URL.</DialogDescription>
         </DialogHeader>
 
-        <MediaUploader
-          accept="both"
-          folder={`albums/${album.id}`}
-          onChange={(uploadedUrl, uploadedType) => {
-            if (uploadedUrl) addByUrl(uploadedUrl, uploadedType as MediaType);
-          }}
-        />
+        {/* Bulk upload section */}
+        <div className="rounded-xl border border-primary/30 bg-primary/5 p-3">
+          <div className="mb-2 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide text-primary">
+            <Layers className="size-3.5" />
+            Bulk upload
+          </div>
+          <BulkMediaUploader albumId={album.id} onDone={onChanged} folder="albums" />
+        </div>
 
+        {/* Single-file upload (existing) */}
+        <div className="space-y-1.5">
+          <div className="text-[11px] uppercase tracking-wide text-muted-foreground">Add one file</div>
+          <MediaUploader
+            accept="both"
+            folder={`albums/${album.id}`}
+            hideLabel
+            onChange={(uploadedUrl, uploadedType) => {
+              if (uploadedUrl) addByUrl(uploadedUrl, uploadedType as MediaType);
+            }}
+          />
+        </div>
+
+        {/* Paste URL */}
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-[1fr_auto_auto]">
           <Input
             placeholder="https://image-url.jpg"
@@ -339,33 +406,74 @@ function AlbumMediaDialog({ album, onClose, onChanged }: { album: Album; onClose
           </Button>
         </div>
 
-        <div className="mt-2 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
-          {media.length === 0 ? (
-            <p className="col-span-full py-8 text-center text-sm text-muted-foreground">No media yet. Upload above or paste a URL.</p>
-          ) : (
-            media.map((m) => (
-              <div key={m.id} className="group relative overflow-hidden rounded-md border border-border/60 bg-muted">
-                {m.type === "video" ? (
-                  <div className="grid aspect-square size-full place-items-center bg-black/60 text-muted-foreground">
-                    <Images className="size-6" />
-                  </div>
-                ) : (
-                  <img src={m.url} alt={m.title ?? ""} className="aspect-square size-full object-cover" />
-                )}
-                <button
-                  onClick={() => remove(m.id)}
-                  className="bg-destructive/90 text-white absolute right-1 top-1 grid size-7 place-items-center rounded-md opacity-0 transition-opacity group-hover:opacity-100"
-                  aria-label="Remove media"
+        {/* Media list with checkboxes + bulk delete */}
+        {media.length === 0 ? (
+          <p className="py-8 text-center text-sm text-muted-foreground">No media yet. Upload above or paste a URL.</p>
+        ) : (
+          <>
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <label className="flex min-h-[36px] items-center gap-2 text-xs text-muted-foreground">
+                <Checkbox
+                  checked={allSelected}
+                  onCheckedChange={toggleAll}
+                  aria-label="Select all media"
+                />
+                Select all ({media.length})
+              </label>
+              {selected.size > 0 ? (
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  className="h-9"
+                  onClick={bulkDelete}
+                  disabled={bulkDeleting}
                 >
                   <Trash2 className="size-3.5" />
-                </button>
-                <div className="absolute bottom-0 left-0 right-0 bg-black/60 px-2 py-1 text-[10px] text-white">
-                  <span className="truncate">{m.type}</span>
-                </div>
-              </div>
-            ))
-          )}
-        </div>
+                  Delete selected ({selected.size})
+                </Button>
+              ) : null}
+            </div>
+
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
+              {media.map((m) => {
+                const isSel = selected.has(m.id);
+                return (
+                  <div
+                    key={m.id}
+                    className={cn(
+                      "group relative overflow-hidden rounded-md border bg-muted transition",
+                      isSel ? "border-primary ring-1 ring-primary" : "border-border/60"
+                    )}
+                  >
+                    <Checkbox
+                      checked={isSel}
+                      onCheckedChange={() => toggleSel(m.id)}
+                      aria-label={`Select media ${m.title ?? m.id}`}
+                      className="absolute left-1 top-1 z-10 bg-background/90 shadow"
+                    />
+                    {m.type === "video" ? (
+                      <div className="grid aspect-square size-full place-items-center bg-black/60 text-muted-foreground">
+                        <Images className="size-6" />
+                      </div>
+                    ) : (
+                      <img src={m.url} alt={m.title ?? ""} className="aspect-square size-full object-cover" />
+                    )}
+                    <button
+                      onClick={() => remove(m.id)}
+                      className="bg-destructive/90 text-white absolute right-1 top-1 grid size-7 place-items-center rounded-md opacity-0 transition-opacity group-hover:opacity-100"
+                      aria-label="Remove media"
+                    >
+                      <Trash2 className="size-3.5" />
+                    </button>
+                    <div className="absolute bottom-0 left-0 right-0 truncate bg-black/60 px-2 py-1 text-[10px] text-white">
+                      <span className="truncate">{m.title || m.type}</span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </>
+        )}
 
         <DialogFooter>
           <Button variant="ghost" onClick={onClose}>Close</Button>

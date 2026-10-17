@@ -11,20 +11,87 @@ const schema = z.object({
   quote: z.string().optional().nullable(),
   futurePlan: z.string().optional().nullable(),
   section: z.string().optional().nullable(),
+  stream: z
+    .union([z.literal("Natural"), z.literal("Social"), z.null(), z.literal("")])
+    .optional(),
   club: z.string().optional().nullable(),
   order: z.coerce.number().int().default(0),
   featured: z.boolean().default(false),
   published: z.boolean().default(true),
 });
 
-export async function GET() {
+export async function GET(req: Request) {
   return handleErr(async () => {
     await requireAdmin();
-    const rows = await db.student.findMany({
-      orderBy: [{ featured: "desc" }, { order: "asc" }],
-      take: 500,
+
+    const url = new URL(req.url);
+    const page = Math.max(1, Number(url.searchParams.get("page") || "1") || 1);
+    const pageSize = Math.min(
+      500,
+      Math.max(1, Number(url.searchParams.get("pageSize") || "25") || 25)
+    );
+    const q = (url.searchParams.get("q") || "").trim();
+    const stream = url.searchParams.get("stream") || ""; // "" | "Natural" | "Social" | "none"
+    const published = url.searchParams.get("published") || ""; // "" | "true" | "false"
+    const featured = url.searchParams.get("featured") || ""; // "" | "true" | "false"
+
+    const where: Record<string, unknown> = {};
+    if (q) {
+      where.OR = [
+        { name: { contains: q, mode: "insensitive" } },
+        { nickname: { contains: q, mode: "insensitive" } },
+        { section: { contains: q, mode: "insensitive" } },
+        { club: { contains: q, mode: "insensitive" } },
+      ];
+    }
+    if (stream === "Natural" || stream === "Social") {
+      where.stream = stream;
+    } else if (stream === "none") {
+      where.stream = null;
+    }
+    if (published === "true") where.published = true;
+    else if (published === "false") where.published = false;
+    if (featured === "true") where.featured = true;
+    else if (featured === "false") where.featured = false;
+
+    const [items, total] = await Promise.all([
+      db.student.findMany({
+        where,
+        orderBy: [{ featured: "desc" }, { order: "asc" }, { name: "asc" }],
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+      }),
+      db.student.count({ where }),
+    ]);
+
+    // stats — computed on the full set (ignores filters/pagination)
+    const [
+      totalCount,
+      publishedCount,
+      naturalCount,
+      socialCount,
+      withPhotoCount,
+    ] = await Promise.all([
+      db.student.count(),
+      db.student.count({ where: { published: true } }),
+      db.student.count({ where: { stream: "Natural" } }),
+      db.student.count({ where: { stream: "Social" } }),
+      db.student.count({ where: { NOT: { photoUrl: null } } }),
+    ]);
+
+    return ok({
+      items,
+      total,
+      page,
+      pageSize,
+      stats: {
+        total: totalCount,
+        published: publishedCount,
+        natural: naturalCount,
+        social: socialCount,
+        withPhoto: withPhotoCount,
+      },
     });
-    return ok(rows);
   });
 }
 
@@ -42,6 +109,8 @@ export async function POST(req: Request) {
         quote: v.quote || null,
         futurePlan: v.futurePlan || null,
         section: v.section || null,
+        stream:
+          v.stream === "Natural" || v.stream === "Social" ? v.stream : null,
         club: v.club || null,
         order: v.order,
         featured: v.featured,

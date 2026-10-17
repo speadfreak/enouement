@@ -340,6 +340,7 @@ model Student {
   nickname    String?
   section     String?
   club        String?
+  stream      String?  // "Natural" | "Social" | null
   order       Int      @default(0)
   featured    Boolean  @default(false)
   published   Boolean  @default(true)
@@ -348,6 +349,9 @@ model Student {
 
   @@map("students")
   @@index([order])
+  @@index([stream])
+  @@index([section])
+  @@index([name])
 }
 
 // ---------------------------------------------------------------------------

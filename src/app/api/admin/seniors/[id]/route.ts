@@ -11,6 +11,9 @@ const schema = z.object({
   quote: z.string().optional().nullable(),
   futurePlan: z.string().optional().nullable(),
   section: z.string().optional().nullable(),
+  stream: z
+    .union([z.literal("Natural"), z.literal("Social"), z.null(), z.literal("")])
+    .optional(),
   club: z.string().optional().nullable(),
   order: z.coerce.number().int().optional(),
   featured: z.boolean().optional(),
@@ -31,6 +34,10 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
     if (v.quote !== undefined) data.quote = v.quote || null;
     if (v.futurePlan !== undefined) data.futurePlan = v.futurePlan || null;
     if (v.section !== undefined) data.section = v.section || null;
+    if (v.stream !== undefined) {
+      data.stream =
+        v.stream === "Natural" || v.stream === "Social" ? v.stream : null;
+    }
     if (v.club !== undefined) data.club = v.club || null;
     if (v.order !== undefined) data.order = v.order;
     if (v.featured !== undefined) data.featured = v.featured;

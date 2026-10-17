@@ -315,18 +315,18 @@ async function main() {
   // --- Students ---
   await db.student.deleteMany({});
   const names = [
-    { name: "Amanuel Tesfaye", quote: "We didn't just survive — we thrived.", futurePlan: "Computer Science, AAU", nickname: "Aman", section: "A" },
-    { name: "Hanna Bekele", quote: "Every moment was a lesson.", futurePlan: "Medicine, St. Paul's", nickname: "Hanna", section: "B" },
-    { name: "Yonatan Girma", quote: "The future is bright because we built it.", futurePlan: "Engineering, ASTU", nickname: "Yoni", section: "A" },
-    { name: "Saron Alemu", quote: "We are the story they'll tell.", futurePlan: "Law, Addis Ababa University", nickname: "Sari", section: "B" },
-    { name: "Dawit Haile", quote: "Legends never graduate — they evolve.", futurePlan: "Business, AAU", nickname: "Dawe", section: "A" },
-    { name: "Mahlet Tadesse", quote: "From strangers to family in four years.", futurePlan: "Architecture, EiABC", nickname: "Mimi", section: "B" },
-    { name: "Nahom Solomon", quote: "The batch that rewrote the rules.", futurePlan: "Software Engineering", nickname: "Naho", section: "A" },
-    { name: "Bethel Negash", quote: "We came as kids, leaving as legends.", futurePlan: "Pharmacy, AAU", nickname: "Beth", section: "B" },
-    { name: "Kaleb Assefa", quote: "Yellow & green till the end.", futurePlan: "Mechanical Engineering", nickname: "Kale", section: "A" },
-    { name: "Ruth Tesfa", quote: "This is just the beginning.", futurePlan: "Journalism, AAU", nickname: "Ruthie", section: "B" },
-    { name: "Abel Mekonnen", quote: "We made every second count.", futurePlan: "Electrical Engineering", nickname: "Abe", section: "A" },
-    { name: "Selam Worku", quote: "Forever part of something bigger.", futurePlan: "Public Health", nickname: "Sel", section: "B" },
+    { name: "Amanuel Tesfaye", quote: "We didn't just survive — we thrived.", futurePlan: "Computer Science, AAU", nickname: "Aman", section: "A", stream: "Natural" },
+    { name: "Hanna Bekele", quote: "Every moment was a lesson.", futurePlan: "Medicine, St. Paul's", nickname: "Hanna", section: "B", stream: "Natural" },
+    { name: "Yonatan Girma", quote: "The future is bright because we built it.", futurePlan: "Engineering, ASTU", nickname: "Yoni", section: "A", stream: "Natural" },
+    { name: "Saron Alemu", quote: "We are the story they'll tell.", futurePlan: "Law, Addis Ababa University", nickname: "Sari", section: "B", stream: "Social" },
+    { name: "Dawit Haile", quote: "Legends never graduate — they evolve.", futurePlan: "Business, AAU", nickname: "Dawe", section: "A", stream: "Social" },
+    { name: "Mahlet Tadesse", quote: "From strangers to family in four years.", futurePlan: "Architecture, EiABC", nickname: "Mimi", section: "B", stream: "Natural" },
+    { name: "Nahom Solomon", quote: "The batch that rewrote the rules.", futurePlan: "Software Engineering", nickname: "Naho", section: "A", stream: "Natural" },
+    { name: "Bethel Negash", quote: "We came as kids, leaving as legends.", futurePlan: "Pharmacy, AAU", nickname: "Beth", section: "B", stream: "Social" },
+    { name: "Kaleb Assefa", quote: "Yellow & green till the end.", futurePlan: "Mechanical Engineering", nickname: "Kale", section: "A", stream: "Natural" },
+    { name: "Ruth Tesfa", quote: "This is just the beginning.", futurePlan: "Journalism, AAU", nickname: "Ruthie", section: "B", stream: "Social" },
+    { name: "Abel Mekonnen", quote: "We made every second count.", futurePlan: "Electrical Engineering", nickname: "Abe", section: "A", stream: "Natural" },
+    { name: "Selam Worku", quote: "Forever part of something bigger.", futurePlan: "Public Health", nickname: "Sel", section: "B", stream: "Social" },
   ];
   for (let i = 0; i < names.length; i++) {
     await db.student.create({
