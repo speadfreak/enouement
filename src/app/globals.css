@@ -335,6 +335,24 @@
   }
 }
 
+/* "Reduce effects" toggle (user-controlled, independent of prefers-reduced-motion) */
+.reduce-effects *,
+.reduce-effects *::before,
+.reduce-effects *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.05ms !important;
+}
+.reduce-effects .animate-marquee,
+.reduce-effects .animate-floaty,
+.reduce-effects .animate-pulse-glow,
+.reduce-effects .shimmer {
+  animation: none !important;
+}
+.reduce-effects canvas {
+  display: none !important;
+}
+
 /* Custom cursor */
 .cursor-dot, .cursor-ring {
   position: fixed;

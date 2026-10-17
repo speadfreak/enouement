@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Menu, X, Sparkles } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { ReduceEffectsToggle } from "@/components/reduce-effects-toggle";
 
 type NavLink = { label: string; href: string; icon?: string };
 
@@ -81,6 +82,7 @@ export function Navbar({ links = [] }: { links?: NavLink[] }) {
 
           {/* Right */}
           <div className="flex items-center gap-2">
+            <ReduceEffectsToggle className="hidden sm:flex" />
             <ThemeToggle />
             <button
               aria-label="Open menu"
