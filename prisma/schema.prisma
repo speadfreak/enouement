@@ -98,9 +98,28 @@ model SiteSetting {
   socialLinks   Json     @default("{}")
   contactInfo   Json     @default("{}")
   footerText    String   @default("Enouement 2K27 — Class of 2027. Made with love.")
+  // Developer credit (admin-editable)
+  devName       String   @default("Joseph James")
+  devRole       String   @default("Full-Stack Developer")
+  devLink       String?
   updatedAt     DateTime @updatedAt
 
   @@map("site_settings")
+}
+
+model DeveloperLink {
+  id        String   @id @default(cuid())
+  title     String
+  tagline   String?
+  url       String
+  logoUrl   String?
+  order     Int      @default(0)
+  enabled   Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("developer_links")
+  @@index([order])
 }
 
 model NavLink {
