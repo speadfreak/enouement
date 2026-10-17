@@ -90,20 +90,25 @@ export function Countdown({ date, label = "Graduation Day", className = "" }: Pr
         <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
         {label}
       </div>
-      <div className="grid grid-cols-4 gap-2 sm:gap-4">
+      <div className="grid grid-cols-4 gap-2 sm:gap-3 md:gap-4">
         {units.map((u) => (
           <div
             key={u.label}
-            className="glass relative flex flex-col items-center justify-center rounded-2xl px-2 py-4 sm:px-4 sm:py-5"
+            className="glass relative flex min-w-0 flex-col items-center justify-center rounded-2xl px-3 py-3 sm:px-4 sm:py-5"
           >
+            {/* top hairline accent */}
             <span
               aria-hidden
-              className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/60 to-transparent"
+              className="absolute inset-x-2 top-0 h-px bg-gradient-to-r from-transparent via-primary/60 to-transparent sm:inset-x-3"
             />
-            <span className="font-mono text-3xl font-bold tabular-nums text-foreground sm:text-5xl">
+            {/* number — clamped sizing so 3-digit Days never overflow on any viewport */}
+            <span
+              className="font-mono font-bold tabular-nums leading-none text-foreground"
+              style={{ fontSize: "clamp(1.5rem, 5vw, 2.25rem)" }}
+            >
               <FlipDigit value={u.value} />
             </span>
-            <span className="mt-1 text-[0.6rem] uppercase tracking-[0.2em] text-muted-foreground sm:text-xs">
+            <span className="mt-1.5 text-[0.55rem] uppercase tracking-[0.2em] text-muted-foreground sm:text-[0.65rem] md:text-xs">
               {u.label}
             </span>
           </div>

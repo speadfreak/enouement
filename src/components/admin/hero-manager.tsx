@@ -40,8 +40,8 @@ const FIELDS: FieldConfig[] = [
     { label: "Image", value: "image" },
     { label: "Video", value: "video" },
   ] },
-  { name: "url", label: "URL", type: "text", required: true, full: true, placeholder: "https://…" },
-  { name: "posterUrl", label: "Poster URL", type: "text", full: true, placeholder: "https://…" },
+  { name: "url", label: "URL", type: "image", accept: "both", required: true, full: true, folder: "hero", placeholder: "https://…", description: "Background image or video for the hero slide." },
+  { name: "posterUrl", label: "Poster URL (for videos)", type: "image", full: true, folder: "hero", placeholder: "https://…" },
   { name: "title", label: "Title", type: "text", full: true },
   { name: "duration", label: "Duration (ms)", type: "number", placeholder: "6000" },
   { name: "transition", label: "Transition", type: "select", options: [

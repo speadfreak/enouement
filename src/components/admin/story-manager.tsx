@@ -36,7 +36,7 @@ const FIELDS: FieldConfig[] = [
   { name: "title", label: "Title", type: "text", required: true, full: true },
   { name: "subtitle", label: "Subtitle", type: "text", full: true },
   { name: "body", label: "Body", type: "textarea", required: true, full: true, rows: 6 },
-  { name: "coverUrl", label: "Cover URL", type: "text", full: true, placeholder: "https://…" },
+  { name: "coverUrl", label: "Cover URL", type: "image", full: true, folder: "story", placeholder: "https://…" },
   { name: "year", label: "Year", type: "text", placeholder: "2024 / Freshman Year…" },
   { name: "order", label: "Order", type: "number" },
   { name: "published", label: "Published", type: "boolean" },

@@ -41,7 +41,7 @@ const FIELDS: FieldConfig[] = [
   { name: "description", label: "Description", type: "textarea", full: true, rows: 3 },
   { name: "price", label: "Price (ETB)", type: "number", placeholder: "0.00" },
   { name: "order", label: "Order", type: "number" },
-  { name: "imageUrls", label: "Image URLs", type: "url-list", full: true, placeholder: "https://…, https://…" },
+  { name: "imageUrls", label: "Image URLs", type: "image-list", full: true, folder: "merch", placeholder: "https://…, https://…" },
   { name: "colors", label: "Colors", type: "tags", placeholder: "black, white, green" },
   { name: "sizes", label: "Sizes", type: "tags", placeholder: "S, M, L, XL" },
   { name: "details", label: "Details", type: "textarea", full: true, rows: 3 },

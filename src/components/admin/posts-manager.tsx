@@ -37,7 +37,7 @@ const schema = z.object({
 const FIELDS: FieldConfig[] = [
   { name: "caption", label: "Caption", type: "text", required: true, full: true },
   { name: "tags", label: "Tags", type: "tags", placeholder: "senior, farewell, grad" },
-  { name: "mediaUrls", label: "Media URLs", type: "url-list", full: true, placeholder: "https://…, https://…" },
+  { name: "mediaUrls", label: "Media URLs", type: "image-list", full: true, folder: "posts", placeholder: "https://…, https://…" },
   { name: "mediaType", label: "Media Type", type: "select", options: [
     { label: "Image", value: "image" },
     { label: "Video", value: "video" },

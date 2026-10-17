@@ -27,6 +27,8 @@ import {
 import { cn } from "@/lib/utils";
 import type { FieldConfig } from "@/components/admin/resource-form";
 import { toInputValue } from "@/components/admin/field-utils";
+import { MediaField } from "@/components/admin/media-field";
+import { MediaMultiUploader } from "@/components/admin/media-uploader";
 
 export interface SingleRecordFormProps {
   title: string;
@@ -146,6 +148,27 @@ export function SingleRecordForm({
                           value={field.value ?? ""}
                           onChange={field.onChange}
                           onBlur={field.onBlur}
+                        />
+                      );
+                    }
+                    if (f.type === "image" || f.type === "video") {
+                      return (
+                        <MediaField
+                          value={field.value ?? ""}
+                          accept={f.accept ?? f.type}
+                          folder={f.folder}
+                          placeholder={f.placeholder}
+                          onChange={(url) => field.onChange(url)}
+                        />
+                      );
+                    }
+                    if (f.type === "image-list") {
+                      return (
+                        <MediaMultiUploader
+                          value={field.value ?? ""}
+                          accept="both"
+                          folder={f.folder}
+                          onChange={(urls) => field.onChange(urls.join(", "))}
                         />
                       );
                     }

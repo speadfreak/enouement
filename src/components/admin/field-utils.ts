@@ -5,10 +5,14 @@ export function toInputValue(v: any, type: FieldType): any {
   if (v == null) {
     if (type === "boolean") return false;
     if (type === "number") return "";
+    if (type === "image-list") return "";
     return "";
   }
-  if (type === "tags" || type === "url-list") {
+  if (type === "tags" || type === "url-list" || type === "image-list") {
     return Array.isArray(v) ? v.join(", ") : String(v);
+  }
+  if (type === "image" || type === "video") {
+    return typeof v === "string" ? v : "";
   }
   if (type === "json") {
     if (typeof v === "string") return v;

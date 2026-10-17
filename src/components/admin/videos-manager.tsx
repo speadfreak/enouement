@@ -39,7 +39,7 @@ const FIELDS: FieldConfig[] = [
   { name: "title", label: "Title", type: "text", required: true, full: true },
   { name: "description", label: "Description", type: "textarea", full: true, rows: 3 },
   { name: "url", label: "Embed URL", type: "text", required: true, full: true, placeholder: "https://youtube.com/embed/…" },
-  { name: "posterUrl", label: "Poster URL", type: "text", full: true, placeholder: "https://…" },
+  { name: "posterUrl", label: "Poster URL", type: "image", full: true, folder: "videos", placeholder: "https://…" },
   {
     name: "category", label: "Category", type: "select", options: [
       { label: "Event", value: "event" },

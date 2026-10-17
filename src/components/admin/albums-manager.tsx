@@ -26,6 +26,7 @@ import {
 import { DataTable, type Column } from "@/components/admin/data-table";
 import { ResourceForm, type FieldConfig } from "@/components/admin/resource-form";
 import { ConfirmDelete, PageHeader } from "@/components/admin/page-header";
+import { MediaUploader, type MediaType } from "@/components/admin/media-uploader";
 import { Plus, Images, Trash2 } from "lucide-react";
 
 type Media = {
@@ -60,7 +61,7 @@ const schema = z.object({
 const FIELDS: FieldConfig[] = [
   { name: "title", label: "Title", type: "text", required: true, full: true },
   { name: "description", label: "Description", type: "textarea", full: true, rows: 3 },
-  { name: "coverUrl", label: "Cover URL", type: "text", full: true, placeholder: "https://…" },
+  { name: "coverUrl", label: "Cover URL", type: "image", full: true, folder: "albums", placeholder: "https://…" },
   {
     name: "category", label: "Category", type: "select", options: [
       { label: "Events", value: "events" },
@@ -264,14 +265,14 @@ function AlbumMediaDialog({ album, onClose, onChanged }: { album: Album; onClose
 
   const media = album.media ?? [];
 
-  const add = async () => {
-    if (!url.trim()) return;
+  const addByUrl = React.useCallback(async (rawUrl: string, t: "image" | "video") => {
+    if (!rawUrl.trim()) return;
     setAdding(true);
     try {
       const r = await fetch(`/api/admin/albums/${album.id}/media`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url: url.trim(), type, order: media.length }),
+        body: JSON.stringify({ url: rawUrl.trim(), type: t, order: media.length }),
       });
       if (!r.ok) {
         const e = await r.json().catch(() => null);
@@ -285,7 +286,9 @@ function AlbumMediaDialog({ album, onClose, onChanged }: { album: Album; onClose
     } finally {
       setAdding(false);
     }
-  };
+  }, [album.id, media.length, onChanged]);
+
+  const add = () => addByUrl(url, type);
 
   const remove = async (mediaId: string) => {
     const r = await fetch(`/api/admin/albums/${album.id}/media/${mediaId}`, { method: "DELETE" });
@@ -303,8 +306,16 @@ function AlbumMediaDialog({ album, onClose, onChanged }: { album: Album; onClose
       <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-3xl">
         <DialogHeader>
           <DialogTitle className="font-display text-xl">Media · {album.title}</DialogTitle>
-          <DialogDescription>Add image or video URLs to this album.</DialogDescription>
+          <DialogDescription>Upload files from your device or paste an image / video URL.</DialogDescription>
         </DialogHeader>
+
+        <MediaUploader
+          accept="both"
+          folder={`albums/${album.id}`}
+          onChange={(uploadedUrl, uploadedType) => {
+            if (uploadedUrl) addByUrl(uploadedUrl, uploadedType as MediaType);
+          }}
+        />
 
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-[1fr_auto_auto]">
           <Input
@@ -330,11 +341,17 @@ function AlbumMediaDialog({ album, onClose, onChanged }: { album: Album; onClose
 
         <div className="mt-2 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
           {media.length === 0 ? (
-            <p className="col-span-full py-8 text-center text-sm text-muted-foreground">No media yet. Add URLs above.</p>
+            <p className="col-span-full py-8 text-center text-sm text-muted-foreground">No media yet. Upload above or paste a URL.</p>
           ) : (
             media.map((m) => (
               <div key={m.id} className="group relative overflow-hidden rounded-md border border-border/60 bg-muted">
-                <img src={m.url} alt={m.title ?? ""} className="aspect-square size-full object-cover" />
+                {m.type === "video" ? (
+                  <div className="grid aspect-square size-full place-items-center bg-black/60 text-muted-foreground">
+                    <Images className="size-6" />
+                  </div>
+                ) : (
+                  <img src={m.url} alt={m.title ?? ""} className="aspect-square size-full object-cover" />
+                )}
                 <button
                   onClick={() => remove(m.id)}
                   className="bg-destructive/90 text-white absolute right-1 top-1 grid size-7 place-items-center rounded-md opacity-0 transition-opacity group-hover:opacity-100"

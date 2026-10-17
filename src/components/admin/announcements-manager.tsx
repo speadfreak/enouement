@@ -44,7 +44,7 @@ const FIELDS: FieldConfig[] = [
   { name: "slug", label: "Slug (auto from title if empty)", type: "text", full: true, placeholder: "auto-generated" },
   { name: "excerpt", label: "Excerpt", type: "textarea", full: true, rows: 2 },
   { name: "body", label: "Body", type: "textarea", required: true, full: true, rows: 6 },
-  { name: "coverUrl", label: "Cover URL", type: "text", full: true, placeholder: "https://…" },
+  { name: "coverUrl", label: "Cover URL", type: "image", full: true, folder: "announcements", placeholder: "https://…" },
   {
     name: "category", label: "Category", type: "select", options: [
       { label: "News", value: "news" },

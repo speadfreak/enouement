@@ -41,7 +41,7 @@ const schema = z.object({
 const FIELDS: FieldConfig[] = [
   { name: "name", label: "Name", type: "text", required: true },
   { name: "nickname", label: "Nickname", type: "text" },
-  { name: "photoUrl", label: "Photo URL", type: "text", full: true, placeholder: "https://…" },
+  { name: "photoUrl", label: "Photo URL", type: "image", full: true, folder: "seniors", placeholder: "https://…" },
   { name: "quote", label: "Quote", type: "textarea", full: true, rows: 2 },
   { name: "futurePlan", label: "Future Plan", type: "textarea", full: true, rows: 2 },
   { name: "section", label: "Section", type: "text", placeholder: "A / B / Science…" },

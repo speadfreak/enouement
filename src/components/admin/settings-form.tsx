@@ -34,9 +34,9 @@ const FIELDS: FieldConfig[] = [
   { name: "secondaryColor", label: "Secondary Color", type: "text", placeholder: "#00C853" },
   { name: "countdownLabel", label: "Countdown Label", type: "text", placeholder: "Graduation Day" },
   { name: "countdownDate", label: "Countdown Date", type: "datetime-local" },
-  { name: "logoUrl", label: "Logo URL", type: "text", placeholder: "https://…" },
-  { name: "faviconUrl", label: "Favicon URL", type: "text", placeholder: "https://…" },
-  { name: "ogImageUrl", label: "OG Image URL", type: "text", full: true, placeholder: "https://…" },
+  { name: "logoUrl", label: "Logo URL", type: "image", folder: "settings", placeholder: "https://…" },
+  { name: "faviconUrl", label: "Favicon URL", type: "image", folder: "settings", placeholder: "https://…" },
+  { name: "ogImageUrl", label: "OG Image URL", type: "image", full: true, folder: "settings", placeholder: "https://…" },
   {
     name: "socialLinks",
     label: "Social Links (JSON)",

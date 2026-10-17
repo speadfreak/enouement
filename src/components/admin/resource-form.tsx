@@ -27,6 +27,8 @@ import {
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { toInputValue as toInput } from "@/components/admin/field-utils";
+import { MediaField } from "@/components/admin/media-field";
+import { MediaMultiUploader } from "@/components/admin/media-uploader";
 
 export type FieldType =
   | "text"
@@ -39,7 +41,10 @@ export type FieldType =
   | "tags"
   | "json"
   | "password"
-  | "url-list";
+  | "url-list"
+  | "image"
+  | "video"
+  | "image-list";
 
 export interface FieldConfig {
   name: string;
@@ -52,6 +57,10 @@ export interface FieldConfig {
   /** span full width on desktop */
   full?: boolean;
   rows?: number;
+  /** Cloudinary sub-folder for image/video uploads. */
+  folder?: string;
+  /** Override the accept mode for image/video fields (defaults to f.type). */
+  accept?: "image" | "video" | "both";
 }
 
 export interface ResourceFormProps {
@@ -198,6 +207,27 @@ export function ResourceForm({
                           value={field.value ?? ""}
                           onChange={field.onChange}
                           onBlur={field.onBlur}
+                        />
+                      );
+                    }
+                    if (f.type === "image" || f.type === "video") {
+                      return (
+                        <MediaField
+                          value={field.value ?? ""}
+                          accept={f.accept ?? f.type}
+                          folder={f.folder}
+                          placeholder={f.placeholder}
+                          onChange={(url) => field.onChange(url)}
+                        />
+                      );
+                    }
+                    if (f.type === "image-list") {
+                      return (
+                        <MediaMultiUploader
+                          value={field.value ?? ""}
+                          accept="both"
+                          folder={f.folder}
+                          onChange={(urls) => field.onChange(urls.join(", "))}
                         />
                       );
                     }
