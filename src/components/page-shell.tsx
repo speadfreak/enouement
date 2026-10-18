@@ -14,7 +14,7 @@ export async function PageShell({ children }: { children: React.ReactNode }) {
   ]);
   return (
     <div className="flex min-h-[100dvh] flex-col">
-      <Navbar links={navLinks} />
+      <Navbar links={navLinks} logoUrl={site?.logoUrl} siteName={site?.siteName} />
       <main className="flex-1">{children}</main>
       <Footer site={site} navLinks={navLinks} developerLinks={developerLinks} />
     </div>

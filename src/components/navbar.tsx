@@ -5,12 +5,13 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Menu, X, Sparkles } from "lucide-react";
+import Image from "next/image";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { ReduceEffectsToggle } from "@/components/reduce-effects-toggle";
 
 type NavLink = { label: string; href: string; icon?: string };
 
-export function Navbar({ links = [] }: { links?: NavLink[] }) {
+export function Navbar({ links = [], logoUrl, siteName }: { links?: NavLink[]; logoUrl?: string | null; siteName?: string | null }) {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
@@ -44,12 +45,18 @@ export function Navbar({ links = [] }: { links?: NavLink[] }) {
         }`}
       >
         <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-2 px-3 sm:px-6 lg:px-8 safe-t">
-          {/* Logo — shrinks gracefully on small screens */}
+          {/* Logo — admin-uploaded logo or default sparkles */}
           <Link href="/" className="group flex shrink-0 items-center gap-2" aria-label="Home">
-            <span className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary to-secondary text-primary-foreground shadow-lg">
-              <Sparkles className="h-4 w-4" />
-              <span className="absolute inset-0 animate-pulse-glow rounded-full" />
-            </span>
+            {logoUrl ? (
+              <span className="relative flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full shadow-lg">
+                <Image src={logoUrl} alt={siteName || "Enouement 2K27 logo"} fill sizes="36px" className="object-cover" />
+              </span>
+            ) : (
+              <span className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary to-secondary text-primary-foreground shadow-lg">
+                <Sparkles className="h-4 w-4" />
+                <span className="absolute inset-0 animate-pulse-glow rounded-full" />
+              </span>
+            )}
             <span className="font-display text-base font-extrabold tracking-tight sm:text-lg">
               <span className="hidden min-[400px]:inline">ENOUEMENT</span>
               <span className="min-[400px]:hidden">E2</span>

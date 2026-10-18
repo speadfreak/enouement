@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
 import { requireAdmin, logAudit } from "@/lib/session";
 import { handleErr, ok, bad, parseBody } from "@/lib/admin-route";
@@ -69,6 +70,10 @@ export async function PUT(req: Request) {
     });
 
     await logAudit("update", "SiteSetting", updated.id, { siteName: updated.siteName });
+
+    // Revalidate all public pages so logo/siteName/footer changes appear instantly
+    revalidatePath("/", "layout");
+
     return ok(updated);
   });
 }

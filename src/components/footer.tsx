@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Instagram, Send, Youtube, Sparkles, Mail, Heart } from "lucide-react";
 import { Marquee } from "@/components/marquee";
 import { Countdown } from "@/components/hero/countdown";
@@ -21,6 +22,9 @@ type Site = {
   devName?: string | null;
   devRole?: string | null;
   devLink?: string | null;
+  logoUrl?: string | null;
+  faviconUrl?: string | null;
+  ogImageUrl?: string | null;
 };
 
 type Props = {
@@ -124,9 +128,15 @@ export async function Footer({ site, navLinks, developerLinks }: Props) {
           {/* Brand / dev credit */}
           <div className="md:col-span-2">
             <div className="flex items-center gap-2">
-              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-primary to-secondary text-primary-foreground">
-                <Sparkles className="h-4 w-4" />
-              </span>
+              {site?.logoUrl ? (
+                <span className="relative flex h-9 w-9 items-center justify-center overflow-hidden rounded-full shadow-lg">
+                  <Image src={site.logoUrl} alt={siteName} fill sizes="36px" className="object-cover" />
+                </span>
+              ) : (
+                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-primary to-secondary text-primary-foreground">
+                  <Sparkles className="h-4 w-4" />
+                </span>
+              )}
               <span className="font-display text-xl font-extrabold tracking-tight">
                 {siteName}
               </span>
