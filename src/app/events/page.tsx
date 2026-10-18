@@ -5,6 +5,9 @@ import { Marquee } from "@/components/marquee";
 import { EventList } from "@/components/events/event-list";
 import { getEvents } from "@/lib/data";
 
+// ISR: regenerate at most every 60s. Cached reads (tag "events", revalidate 60).
+export const revalidate = 60;
+
 export const metadata: Metadata = {
   title: "Events",
   description:

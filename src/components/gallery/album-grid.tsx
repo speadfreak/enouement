@@ -79,6 +79,7 @@ function TiltCard({
       viewport={{ once: true, margin: "-10% 0px" }}
       transition={{ duration: 0.6, delay: Math.min(index * 0.08, 0.5), ease: [0.22, 1, 0.36, 1] }}
       style={{ perspective: 1200 }}
+      className="cv-auto"
     >
       <motion.button
         ref={ref}

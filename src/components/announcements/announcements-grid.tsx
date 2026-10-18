@@ -34,6 +34,7 @@ function AnnCard({ a, i }: { a: Announcement; i: number }) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-10% 0px" }}
       transition={{ duration: 0.5, delay: Math.min(i * 0.05, 0.3) }}
+      className="cv-auto"
     >
       <Link
         href={`/announcements/${a.slug}`}

@@ -7,6 +7,9 @@ import { WallOfSeniors } from "@/components/graduation/wall-of-seniors";
 import { ThankYou } from "@/components/graduation/thank-you";
 import { getGraduation, getStudents } from "@/lib/data";
 
+// ISR: regenerate at most every 60s. Cached reads (tags "graduation" + "students").
+export const revalidate = 60;
+
 export const metadata = {
   title: "Graduation — Enouement 2K27",
   description:

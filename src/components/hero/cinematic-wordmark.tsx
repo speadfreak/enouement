@@ -472,7 +472,21 @@ export function CinematicWordmark({ heroRef, className = "" }: Props) {
       );
     }, trigger);
 
-    return () => ctx.revert();
+    // Recompute trigger positions after fonts + images finish loading — the
+    // initial measurement happens before webfonts swap in, so trigger start/end
+    // can be off by tens of px. `load` waits for all subresources.
+    const onLoad = () => ScrollTrigger.refresh();
+    if (document.readyState === "complete") {
+      // Already loaded (e.g. route change in SPA mode) — refresh next tick.
+      requestAnimationFrame(onLoad);
+    } else {
+      window.addEventListener("load", onLoad, { passive: true });
+    }
+
+    return () => {
+      window.removeEventListener("load", onLoad);
+      ctx.revert();
+    };
   }, [reduced, mounted, heroRef]);
 
   /* ----- render ----- */

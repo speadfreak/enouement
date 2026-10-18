@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { revalidateTag } from "next/cache";
 import { db } from "@/lib/db";
 import { requireAdmin, logAudit } from "@/lib/session";
 import { handleErr, ok, bad, parseBody } from "@/lib/admin-route";
@@ -50,6 +51,7 @@ export async function PUT(req: Request) {
       update: data,
     });
     await logAudit("update", "GraduationContent", updated.id, { headline: updated.headline });
+    revalidateTag("graduation", "max");
     return ok(updated);
   });
 }

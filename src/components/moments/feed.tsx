@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Heart, Loader2, Pin, Sparkles, ArrowUp } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
@@ -223,6 +223,13 @@ function Card({
 }
 
 /* ---------- Feed ---------- */
+type LatestSignature = {
+  latestId: string | null;
+  latestCreatedAt: string | null;
+  latestPinned: boolean;
+  count: number;
+};
+
 export function Feed({ initialItems, initialCursor }: Props) {
   const [items, setItems] = useState<FeedPost[]>(initialItems);
   const [cursor, setCursor] = useState<string | null>(initialCursor);
@@ -230,15 +237,92 @@ export function Feed({ initialItems, initialCursor }: Props) {
   const [hasMore, setHasMore] = useState<boolean>(initialCursor !== null);
   const [activeId, setActiveId] = useState<string | null>(null);
 
-  /* Live poll: just check the first page for new posts */
+  /* ---- visibility gating ----
+   * Two layers:
+   *   1. The browser tab must be visible (no polling in background tabs).
+   *   2. The feed container must be on-screen (no polling when the user
+   *      has scrolled away to the footer or another section).
+   * When either is false, refetchInterval returns `false` (paused).
+   */
+  const [tabVisible, setTabVisible] = useState(true);
+  const [feedInView, setFeedInView] = useState(true);
+  const feedRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const onVisibility = () => setTabVisible(document.visibilityState === "visible");
+    onVisibility();
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => document.removeEventListener("visibilitychange", onVisibility);
+  }, []);
+
+  useEffect(() => {
+    const el = feedRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        // The feed is considered "in view" when ANY part of it is visible.
+        const visible = entries.some((e) => e.isIntersecting);
+        setFeedInView((prev) => (prev !== visible ? visible : prev));
+      },
+      { rootMargin: "200px 0px" }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  /* ---- lightweight "is there anything new?" poll ----
+   * Hits /api/posts/latest which returns ~80 bytes (id + createdAt +
+   * count). If the signature differs from the topmost item we already
+   * have, ONLY THEN do we fetch the full first page to surface the new
+   * posts. This keeps the periodic poll cheap and bandwidth-friendly.
+   */
+  const topId = items[0]?.id;
+  const topPinned = items[0]?.pinned ?? false;
+  const knownCount = items.length;
+  const pollShouldRun = tabVisible && feedInView;
+
+  const { data: latestSig } = useQuery<LatestSignature>({
+    queryKey: ["posts", "latest"],
+    queryFn: async () => {
+      const res = await fetch(`/api/posts/latest`, { cache: "no-store" });
+      if (!res.ok) throw new Error("fail");
+      return (await res.json()) as LatestSignature;
+    },
+    // 15s interval, but only when the tab AND the feed are visible.
+    refetchInterval: () => (pollShouldRun ? 15_000 : false),
+    refetchIntervalInBackground: false,
+    // Mark as stale fast so visibility-recovery triggers an immediate poll.
+    staleTime: 5_000,
+  });
+
+  // Decide whether we need to fetch the full first page based on the
+  // latest signature vs. what we already have rendered.
+  const hasNewPosts = useMemo(() => {
+    if (!latestSig || !latestSig.latestId) return false;
+    // New top post → either the id differs, or the pinned flag changed
+    // (e.g. an existing post got pinned and should now bubble to top).
+    if (latestSig.latestId !== topId) return true;
+    if (latestSig.latestPinned !== topPinned) return true;
+    // The count grew and our top item is no longer the latest (covered
+    // by the id check above) — fall back to count delta as a safety net.
+    if (latestSig.count > knownCount + 1) return true;
+    return false;
+  }, [latestSig, topId, topPinned, knownCount]);
+
+  // Only fetch the full first page when the lightweight signature
+  // indicates new content. This is what fills the "N new moments" pill.
   const { data: freshData } = useQuery({
-    queryKey: ["posts", "live"],
+    queryKey: ["posts", "fresh", latestSig?.latestId ?? "init"],
     queryFn: async () => {
       const res = await fetch(`/api/posts?limit=20`, { cache: "no-store" });
       if (!res.ok) throw new Error("fail");
       return (await res.json()) as { items: FeedPost[]; nextCursor: string | null };
     },
-    refetchInterval: 20_000,
+    // Pull fresh data only when the signature says there's something new,
+    // AND only while the tab/feed are visible. Without this gate we'd be
+    // re-running the heavy first-page fetch on every signature change.
+    enabled: hasNewPosts && pollShouldRun,
+    staleTime: 30_000,
   });
 
   const knownIds = useMemo(() => new Set(items.map((i) => i.id)), [items]);
@@ -295,7 +379,7 @@ export function Feed({ initialItems, initialCursor }: Props) {
   const activeIndex = items.findIndex((p) => p.id === activeId);
 
   return (
-    <div className="relative">
+    <div className="relative" ref={feedRef}>
       {/* New posts pill */}
       <AnimatePresence>
         {newCount > 0 && (
@@ -342,8 +426,12 @@ export function Feed({ initialItems, initialCursor }: Props) {
         )}
       </AnimatePresence>
 
-      {/* Masonry */}
-      <div className="columns-1 gap-4 sm:columns-2 lg:columns-3 [column-fill:_balance]">
+      {/* Masonry — `cv-auto` on the container skips rendering of the whole
+          grid when it's well below the fold (only the in/near-viewport portion
+          renders). Applying it per-item in a CSS columns layout causes scroll
+          jumps as items above the viewport re-render with actual heights
+          different from the 500px placeholder, so we apply it to the wrapper. */}
+      <div className="cv-auto columns-1 gap-4 sm:columns-2 lg:columns-3 [column-fill:_balance]">
         {items.map((post, i) => (
           <div key={post.id} className="mb-4 break-inside-avoid">
             <Card post={post} index={i} onOpen={setActiveId} />

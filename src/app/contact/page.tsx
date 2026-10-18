@@ -6,6 +6,9 @@ import { Marquee } from "@/components/marquee";
 import { ContactForm } from "@/components/contact/contact-form";
 import { getSite } from "@/lib/data";
 
+// ISR: regenerate at most every 60s. Cached reads (tag "site", revalidate 300).
+export const revalidate = 60;
+
 export const metadata: Metadata = {
   title: "Contact",
   description:

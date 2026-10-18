@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { revalidateTag } from "next/cache";
 import { db } from "@/lib/db";
 import { requireAdmin, logAudit } from "@/lib/session";
 import { handleErr, ok, bad, parseBody } from "@/lib/admin-route";
@@ -50,6 +51,7 @@ export async function POST(req: Request) {
       title: created.title,
       url: created.url,
     });
+    revalidateTag("dev-links", "max");
     return ok(created, 201);
   });
 }

@@ -2,6 +2,10 @@ import { PageShell } from "@/components/page-shell";
 import { SeniorGrid } from "@/components/seniors/senior-grid";
 import { getStudentsPaginated, getStudentStats } from "@/lib/data";
 
+// ISR: regenerate at most every 60s. Cached reads (tag "students", revalidate 60)
+// back the actual data; load-more is via /api/students (also cache-tagged).
+export const revalidate = 60;
+
 export const metadata = {
   title: "Seniors — Meet the Batch — Enouement 2K27",
   description:

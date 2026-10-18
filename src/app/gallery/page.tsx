@@ -5,6 +5,10 @@ import { Marquee } from "@/components/marquee";
 import { getAlbums } from "@/lib/data";
 import { AlbumGrid } from "@/components/gallery/album-grid";
 
+// ISR: regenerate at most every 60s. Cached reads (tag "albums", revalidate 60)
+// back the actual data.
+export const revalidate = 60;
+
 export const metadata: Metadata = {
   title: "Gallery — Frozen in Time",
   description:

@@ -795,7 +795,7 @@ function SeniorCard({
         ease: [0.22, 1, 0.36, 1],
       }}
       data-name-initial={firstLetter(senior.name)}
-      className="list-none"
+      className="cv-auto list-none"
       style={{ willChange: "transform" }}
     >
       <button

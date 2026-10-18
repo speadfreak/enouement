@@ -221,17 +221,21 @@
   box-shadow: 0 0 40px -8px rgba(0, 200, 83, 0.45);
 }
 
-/* Glass cards */
+/* Glass cards
+   backdrop-filter blur radii kept moderate (12 / 16px) so the GPU's
+   box-filter pass stays cheap on mid-range Android. The look is
+   preserved via saturate() — the same cinematic frosted feel, less paint.
+*/
 .glass {
   background: color-mix(in srgb, var(--card) 60%, transparent);
-  backdrop-filter: blur(18px) saturate(140%);
-  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  backdrop-filter: blur(12px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
   border: 1px solid var(--border);
 }
 .glass-strong {
   background: color-mix(in srgb, var(--card) 78%, transparent);
-  backdrop-filter: blur(28px) saturate(160%);
-  -webkit-backdrop-filter: blur(28px) saturate(160%);
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
   border: 1px solid var(--border);
 }
 
@@ -325,6 +329,17 @@
 .safe-b { padding-bottom: env(safe-area-inset-bottom); }
 .safe-t { padding-top: env(safe-area-inset-top); }
 
+/* content-visibility: skip rendering work for off-screen long sections.
+   `contain-intrinsic-size` reserves a placeholder height so the scrollbar
+   doesn't jump when the section scrolls into view and renders for real.
+   Apply to long below-the-fold lists: story chapters, moments feed, gallery
+   album grid, seniors grid, announcements list, events timeline.
+   NOTE: do NOT apply to anything above the fold (hero, navbar, first viewport). */
+.cv-auto {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 500px;
+}
+
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
@@ -352,8 +367,17 @@
 .reduce-effects canvas {
   display: none !important;
 }
+/* Hide the body-wide grain overlay in reduce-effects mode — its
+   mix-blend-mode: overlay forces a full-screen composite on every paint. */
+.reduce-effects .grain::after {
+  display: none;
+}
 
-/* Custom cursor */
+/* Custom cursor
+   Position via `transform` only (no top/left) so the compositor handles it.
+   Width/height are fixed; the hover/press scale is driven from JS (see
+   custom-cursor.tsx) so we never trigger layout or paint on hover.
+*/
 .cursor-dot, .cursor-ring {
   position: fixed;
   top: 0;
@@ -362,6 +386,7 @@
   pointer-events: none;
   z-index: 9999;
   mix-blend-mode: difference;
+  will-change: transform;
 }
 .cursor-dot {
   width: 7px;
@@ -374,7 +399,7 @@
   height: 38px;
   border: 1.5px solid var(--primary);
   transform: translate(-50%, -50%);
-  transition: width 0.2s, height 0.2s, background 0.2s;
+  transition: background 0.2s ease;
 }
 @media (hover: none) {
   .cursor-dot, .cursor-ring { display: none; }

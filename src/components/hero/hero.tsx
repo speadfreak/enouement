@@ -8,11 +8,16 @@ import { MagneticButton } from "@/components/magnetic-button";
 import { SmartImage } from "@/components/smart-image";
 import { Countdown } from "./countdown";
 import { CinematicWordmark } from "./cinematic-wordmark";
+import { usePerformanceTier } from "@/hooks/use-performance-tier";
+import { useFps } from "@/hooks/use-fps";
 
-// 3D scene is dynamically imported with ssr:false to avoid SSR / three.js issues.
+// 3D scene is dynamically imported with ssr:false to avoid SSR / three.js
+// issues. It is *also* only mounted after the LCP (wordmark) has painted AND
+// the preloader has unmounted, so the browser never has to choose between
+// the intro's 2D canvas and the hero's WebGL context on first paint.
 const HeroScene = dynamic(
   () => import("./hero-scene").then((m) => m.HeroScene),
-  { ssr: false, loading: () => null }
+  { ssr: false, loading: () => null },
 );
 
 export type HeroSlide = {
@@ -49,21 +54,103 @@ export function Hero({
 }: Props) {
   const [index, setIndex] = useState(0);
   const [reduced, setReduced] = useState(false);
-  const [sceneEnabled, setSceneEnabled] = useState(false);
+
+  /* --- performance tier (static capability) + live FPS auto-step-down --- */
+  const baseTier = usePerformanceTier();
+  const { tier } = useFps(baseTier);
+
+  /* --- deferred 3D mount --------------------------------------------------
+   * The 3D canvas only mounts once:
+   *   1. the wordmark + countdown + slideshow have painted (requestAnimationFrame
+   *      × 2 — the "double rAF" idiom that guarantees a frame has been
+   *      committed to the screen, not just queued), AND
+   *   2. the preloader overlay (`.pl-root`) has been torn down — so we never
+   *      run the intro's 2D canvas + the hero's WebGL context at the same
+   *      time. If the preloader is already gone (e.g. reduced-motion path,
+   *      which mounts for ~0.8s), step through immediately.
+   *   3. the browser is idle (requestIdleCallback with a 1s timeout fallback
+   *      to setTimeout(200) on Safari).
+   * Tier "low" / "off" never mounts the 3D scene at all — the poster
+   * (slideshow + wordmark + gradient) is the hero.
+   */
+  const [canMount3D, setCanMount3D] = useState(false);
 
   const sectionRef = useRef<HTMLElement>(null);
 
-  // Detect reduced-motion + low-end devices on mount.
   useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const isReduced = mq.matches;
-    setReduced(isReduced);
+    setReduced(mq.matches);
 
-    const cores = navigator.hardwareConcurrency || 4;
-    const mem = (navigator as unknown as { deviceMemory?: number }).deviceMemory ?? 4;
-    const lowEnd = cores <= 4 || mem <= 4;
-    setSceneEnabled(!isReduced && !lowEnd);
+    let cancelled = false;
+    let r1 = 0;
+    let r2 = 0;
+    let safetyTimer: number | undefined;
+
+    const mount = () => {
+      if (cancelled) return;
+      setCanMount3D(true);
+    };
+
+    const scheduleIdle = () => {
+      if (cancelled) return;
+      const ric = (
+        window as unknown as {
+          requestIdleCallback?: (
+            cb: () => void,
+            opts?: { timeout?: number },
+          ) => number;
+        }
+      ).requestIdleCallback;
+      if (typeof ric === "function") {
+        ric(mount, { timeout: 1000 });
+      } else {
+        window.setTimeout(mount, 200);
+      }
+    };
+
+    const waitForPreloader = () => {
+      if (cancelled) return;
+      if (!document.querySelector(".pl-root")) {
+        scheduleIdle();
+        return;
+      }
+      // Preloader still mounted — watch for its removal via MutationObserver.
+      const obs = new MutationObserver(() => {
+        if (cancelled) {
+          obs.disconnect();
+          return;
+        }
+        if (!document.querySelector(".pl-root")) {
+          obs.disconnect();
+          scheduleIdle();
+        }
+      });
+      obs.observe(document.body, { childList: true, subtree: true });
+      // Safety net: if the preloader hangs for any reason, mount anyway.
+      safetyTimer = window.setTimeout(() => {
+        obs.disconnect();
+        scheduleIdle();
+      }, 6000);
+    };
+
+    // Double-rAF — guarantees at least one frame has painted before we touch
+    // the 3D path, so LCP is never delayed by WebGL init.
+    r1 = requestAnimationFrame(() => {
+      r2 = requestAnimationFrame(waitForPreloader);
+    });
+
+    return () => {
+      cancelled = true;
+      cancelAnimationFrame(r1);
+      cancelAnimationFrame(r2);
+      if (safetyTimer) window.clearTimeout(safetyTimer);
+    };
   }, []);
+
+  /* The 3D scene is only worth mounting on high/medium tiers and only after
+   * the deferred-mount gate above has flipped. */
+  const sceneActive =
+    canMount3D && (tier === "high" || tier === "medium");
 
   // Crossfade slideshow.
   useEffect(() => {
@@ -114,7 +201,10 @@ export function Hero({
                 src={current.url}
                 alt={current.title ?? "Enouement hero"}
                 fill
-                priority
+                sizes="100vw"
+                cloudinaryWidth={1920}
+                priority={index === 0}
+                loading={index === 0 ? undefined : "lazy"}
                 wrapperClassName="absolute inset-0"
                 className="object-cover"
                 seed={current.id}
@@ -131,10 +221,11 @@ export function Hero({
       </div>
 
       {/* ------------------------------------------------------------ */}
-      {/*  3D scene overlay — hidden on small screens / low-end         */}
+      {/*  3D scene overlay — hidden on phones / low tier. Mounted      */}
+      {/*  only after LCP paints and the preloader tears down.           */}
       {/* ------------------------------------------------------------ */}
       <div className="absolute inset-0 -z-20 hidden md:block">
-        <HeroScene enabled={sceneEnabled} />
+        {sceneActive && <HeroScene tier={tier} />}
       </div>
 
       {/* ------------------------------------------------------------ */}

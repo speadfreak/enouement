@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Menu, X, Sparkles } from "lucide-react";
 import Image from "next/image";
@@ -13,11 +13,23 @@ type NavLink = { label: string; href: string; icon?: string };
 
 export function Navbar({ links = [], logoUrl, siteName }: { links?: NavLink[]; logoUrl?: string | null; siteName?: string | null }) {
   const pathname = usePathname();
-  const [scrolled, setScrolled] = useState(false);
+  const headerRef = useRef<HTMLElement>(null);
   const [open, setOpen] = useState(false);
 
+  // `scrolled` is intentionally NOT React state — toggling it on every scroll
+  // event would re-render the entire Navbar (and its motion.header child) on
+  // every frame. Instead we mutate the header's classList directly. The
+  // `transition-all duration-300` on the header keeps the visual change smooth.
   useEffect(() => {
-    const on = () => setScrolled(window.scrollY > 40);
+    const header = headerRef.current;
+    if (!header) return;
+    const on = () => {
+      const s = window.scrollY > 40;
+      header.classList.toggle("glass-strong", s);
+      header.classList.toggle("border-b", s);
+      header.classList.toggle("border-border/60", s);
+      header.classList.toggle("bg-transparent", !s);
+    };
     on();
     window.addEventListener("scroll", on, { passive: true });
     return () => window.removeEventListener("scroll", on);
@@ -37,12 +49,11 @@ export function Navbar({ links = [], logoUrl, siteName }: { links?: NavLink[]; l
   return (
     <>
       <motion.header
+        ref={headerRef}
         initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
-        className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
-          scrolled ? "glass-strong border-b border-border/60" : "bg-transparent"
-        }`}
+        className="fixed inset-x-0 top-0 z-50 transition-all duration-300 bg-transparent"
       >
         <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-2 px-3 sm:px-6 lg:px-8 safe-t">
           {/* Logo — admin-uploaded logo or default sparkles */}

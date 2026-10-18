@@ -341,7 +341,13 @@ export function MediaUploader({
           {showVideoPreview ? (
             <div className="relative grid aspect-video place-items-center bg-black/60">
               {previewValue.startsWith("data:video") || /\.(mp4|webm|ogg|mov|m4v)$/i.test(previewValue) ? (
-                <video src={previewValue} className="size-full object-contain" controls />
+                <video
+                  src={previewValue}
+                  className="size-full object-contain"
+                  controls
+                  preload="metadata"
+                  playsInline
+                />
               ) : (
                 <div className="flex flex-col items-center gap-2 text-muted-foreground">
                   <FileVideo className="size-8" />

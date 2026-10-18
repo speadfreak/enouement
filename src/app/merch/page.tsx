@@ -5,6 +5,9 @@ import { Marquee } from "@/components/marquee";
 import { MerchShowcase } from "@/components/merch/merch-showcase";
 import { getMerch } from "@/lib/data";
 
+// ISR: regenerate at most every 60s. Cached reads (tag "merch", revalidate 300).
+export const revalidate = 60;
+
 export const metadata: Metadata = {
   title: "Merch",
   description:

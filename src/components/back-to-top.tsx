@@ -27,7 +27,18 @@ export function BackToTop() {
   const strokeDashoffset = useTransform(progress, [0, 1], [CIRCUMFERENCE, 0]);
 
   useEffect(() => {
-    const on = () => setShow(window.scrollY > 300);
+    // rAF-throttled scroll listener — without this, `setShow` fires on every
+    // scroll event (which can be 60+ per second on a trackpad). With rAF we
+    // coalesce to one state update per frame max.
+    let ticking = false;
+    const on = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        setShow(window.scrollY > 300);
+        ticking = false;
+      });
+    };
     on();
     window.addEventListener("scroll", on, { passive: true });
     return () => window.removeEventListener("scroll", on);

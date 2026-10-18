@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { revalidateTag } from "next/cache";
 import { db } from "@/lib/db";
 import { requireAdmin, logAudit } from "@/lib/session";
 import { handleErr, ok, bad, parseBody } from "@/lib/admin-route";
@@ -40,6 +41,7 @@ export async function PUT(req: Request) {
       devName: updated.devName,
       devRole: updated.devRole,
     });
+    revalidateTag("site", "max");
     return ok({
       devName: updated.devName,
       devRole: updated.devRole,

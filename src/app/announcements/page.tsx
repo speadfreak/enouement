@@ -9,6 +9,9 @@ import { SmartImage } from "@/components/smart-image";
 import { AnnouncementsGrid } from "@/components/announcements/announcements-grid";
 import { getAnnouncements } from "@/lib/data";
 
+// ISR: regenerate at most every 60s. Cached reads (tag "announcements", revalidate 60).
+export const revalidate = 60;
+
 export const metadata: Metadata = {
   title: "Announcements",
   description:

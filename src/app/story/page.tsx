@@ -2,6 +2,10 @@ import { PageShell } from "@/components/page-shell";
 import { Timeline } from "@/components/story/timeline";
 import { getStoryChapters } from "@/lib/data";
 
+// ISR: regenerate this page at most every 60s. Cached reads in
+// getStoryChapters (tag "story", revalidate 300) back the actual data.
+export const revalidate = 60;
+
 export const metadata = {
   title: "Our Story — Enouement 2K27",
   description:

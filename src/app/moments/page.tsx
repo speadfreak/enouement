@@ -11,7 +11,9 @@ export const metadata: Metadata = {
     "Live moments, in real time. The pulse of Enouement 2K27 — every post, every face, every feeling.",
 };
 
-export const dynamic = "force-dynamic";
+// ISR: regenerate at most every 60s. Client-side polling (see Feed.tsx)
+// still surfaces fresh posts faster between regenerations.
+export const revalidate = 60;
 
 export default async function MomentsPage() {
   const { items, nextCursor } = await getPosts(30);

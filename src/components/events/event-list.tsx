@@ -142,6 +142,7 @@ function EventCard({ event, index }: { event: EventItem; index: number }) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-10% 0px" }}
       transition={{ duration: 0.5, delay: Math.min(index * 0.05, 0.3) }}
+      className="cv-auto"
     >
       <Link
         href={`/events/${event.slug}`}

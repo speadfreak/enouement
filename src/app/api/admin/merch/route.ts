@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { revalidateTag } from "next/cache";
 import { db } from "@/lib/db";
 import { requireAdmin, logAudit } from "@/lib/session";
 import { handleErr, ok, bad, parseBody } from "@/lib/admin-route";
@@ -44,6 +45,7 @@ export async function POST(req: Request) {
       },
     });
     await logAudit("create", "MerchItem", created.id, { name: created.name });
+    revalidateTag("merch", "max");
     return ok(created, 201);
   });
 }

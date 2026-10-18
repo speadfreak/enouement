@@ -5,6 +5,9 @@ import { Marquee } from "@/components/marquee";
 import { getVideos } from "@/lib/data";
 import { VideoGrid } from "@/components/videos/video-grid";
 
+// ISR: regenerate at most every 60s. Cached reads (tag "videos", revalidate 60).
+export const revalidate = 60;
+
 export const metadata: Metadata = {
   title: "Cinema — Moving Memories",
   description:

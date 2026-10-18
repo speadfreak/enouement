@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { revalidateTag } from "next/cache";
 import { db } from "@/lib/db";
 import { requireAdmin, logAudit } from "@/lib/session";
 import { handleErr, ok, bad, parseBody } from "@/lib/admin-route";
@@ -50,6 +51,8 @@ export async function POST(req: Request) {
 
     const result = await db.student.createMany({ data: rows });
     await logAudit("bulk-create", "Student", undefined, { count: result.count });
+    revalidateTag("students", "max");
+    revalidateTag("stats", "max");
     return ok({ created: result.count }, 201);
   });
 }

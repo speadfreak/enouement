@@ -1,18 +1,54 @@
 "use client";
 
-import { Canvas, useFrame } from "@react-three/fiber";
+/**
+ * HeroScene — the cinematic 3D overlay for the hero.
+ *
+ * Performance profile (this file is the most expensive thing on the page
+ * by a wide margin, so every choice here is deliberate):
+ *
+ *   • `tier`-driven particle count:   high=1100  medium=500  low/off=0
+ *   • `dpr` capped:                   desktop [1, 1.5]   phone = 1
+ *   • `frameloop="never"` when:       hero scrolled off-screen OR tab hidden
+ *   • 1 ambient + 1 point light only (was 3 lights)
+ *   • Particles drawn as a single `THREE.Points` (1 draw call)
+ *   • On unmount: every geometry + material + the GL context is disposed
+ *     explicitly so we never leak GPU memory between hero views / tier
+ *     step-downs / route changes.
+ *
+ * The Canvas is wrapped in a `div` whose visibility is observed by an
+ * IntersectionObserver — when it leaves the viewport (or the document
+ * becomes hidden), we flip `frameloop` to "never" so rAF stops entirely
+ * instead of redrawing an off-screen canvas.
+ */
+
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Float, Icosahedron, Edges } from "@react-three/drei";
-import { useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
+import type { PerformanceTier } from "@/hooks/use-performance-tier";
 
 /* ------------------------------------------------------------------ */
-/*  Particles — drifting glowing points inside a spherical shell      */
+/*  Particles                                                          */
 /* ------------------------------------------------------------------ */
+
+function particleCountFor(tier: PerformanceTier): number {
+  switch (tier) {
+    case "high":
+      return 1100;
+    case "medium":
+      return 500;
+    case "low":
+    case "off":
+    default:
+      return 0;
+  }
+}
+
 function Particles({
-  count = 1100,
+  count,
   radius = 6,
 }: {
-  count?: number;
+  count: number;
   radius?: number;
 }) {
   const ref = useRef<THREE.Points>(null);
@@ -37,6 +73,8 @@ function Particles({
     ref.current.rotation.x += delta * 0.012;
   });
 
+  if (count === 0) return null;
+
   return (
     <points ref={ref}>
       <bufferGeometry>
@@ -55,8 +93,9 @@ function Particles({
 }
 
 /* ------------------------------------------------------------------ */
-/*  The glowing icosahedron — wireframe shell with emissive edges      */
+/*  Core shape — wireframe shell with emissive edges                  */
 /* ------------------------------------------------------------------ */
+
 function CoreShape() {
   const outerRef = useRef<THREE.Mesh>(null);
 
@@ -105,29 +144,127 @@ function CoreShape() {
 }
 
 /* ------------------------------------------------------------------ */
-/*  HeroScene — full 3D canvas overlay                                 */
+/*  Scene cleanup — disposes every GPU resource on unmount             */
 /* ------------------------------------------------------------------ */
-export function HeroScene({ enabled = true }: { enabled?: boolean }) {
-  if (!enabled) return null;
+
+function SceneCleanup() {
+  const { gl, scene } = useThree();
+  useEffect(() => {
+    // Runs on Canvas unmount (i.e. when the hero 3D tears down on tier
+    // step-down, route change, or page exit).
+    return () => {
+      scene.traverse((obj) => {
+        const mesh = obj as THREE.Mesh;
+        if (mesh.geometry) mesh.geometry.dispose();
+        const mat = mesh.material as
+          | THREE.Material
+          | THREE.Material[]
+          | undefined;
+        if (Array.isArray(mat)) {
+          mat.forEach((m) => m.dispose());
+        } else if (mat) {
+          mat.dispose();
+        }
+      });
+      // Drop textures too (the Edges helper and any material maps).
+      gl.dispose();
+    };
+  }, [gl, scene]);
+  return null;
+}
+
+/* ------------------------------------------------------------------ */
+/*  HeroScene                                                          */
+/* ------------------------------------------------------------------ */
+
+export function HeroScene({ tier = "high" }: { tier?: PerformanceTier }) {
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const [active, setActive] = useState(true); // rAF running?
+  const [isPhone, setIsPhone] = useState(false);
+
+  // Phone / coarse-pointer detection — caps dpr to 1 and would otherwise
+  // hide the scene (the wrapper is `hidden md:block` so this is mostly
+  // defensive for narrow desktop windows).
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 767px)");
+    const update = () => setIsPhone(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
+
+  // Pause the rAF loop when the hero scrolls off-screen OR the tab is
+  // hidden — combined into a single boolean so we never redraw an
+  // invisible canvas.
+  useEffect(() => {
+    const el = wrapRef.current;
+    if (!el) return;
+
+    const recompute = () => {
+      if (document.hidden) {
+        setActive(false);
+        return;
+      }
+      const rect = el.getBoundingClientRect();
+      const inViewport =
+        rect.bottom > 0 && rect.top < window.innerHeight;
+      setActive(inViewport);
+    };
+
+    recompute();
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (e.target === el) recompute();
+        }
+      },
+      { threshold: 0.01 },
+    );
+    io.observe(el);
+
+    document.addEventListener("visibilitychange", recompute);
+    window.addEventListener("resize", recompute);
+
+    return () => {
+      io.disconnect();
+      document.removeEventListener("visibilitychange", recompute);
+      window.removeEventListener("resize", recompute);
+    };
+  }, []);
+
+  // Low / off tiers never render the Canvas at all — the wrapper stays
+  // empty so the poster (slideshow + wordmark + gradient) is the hero.
+  if (tier === "low" || tier === "off") return null;
+
+  const count = particleCountFor(tier);
+  const dpr: [number, number] | number = isPhone ? 1 : [1, 1.5];
 
   return (
-    <Canvas
-      dpr={[1, 1.5]}
-      camera={{ position: [0, 0, 5], fov: 45 }}
-      gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
-      style={{ pointerEvents: "none" }}
-    >
-      <ambientLight intensity={0.45} />
-      <pointLight position={[5, 5, 5]} intensity={1.6} color="#ffe600" />
-      <pointLight position={[-5, -3, -5]} intensity={0.7} color="#00c853" />
-      <pointLight position={[0, 3, 4]} intensity={0.4} color="#b9f6ca" />
+    <div ref={wrapRef} className="absolute inset-0">
+      <Canvas
+        frameloop={active ? "always" : "never"}
+        dpr={dpr}
+        camera={{ position: [0, 0, 5], fov: 45 }}
+        gl={{
+          antialias: true,
+          alpha: true,
+          powerPreference: "high-performance",
+        }}
+        style={{ pointerEvents: "none" }}
+      >
+        <SceneCleanup />
+        {/* 1 ambient + 1 point is enough — was 3 lights before. */}
+        <ambientLight intensity={0.45} />
+        <pointLight position={[5, 5, 5]} intensity={1.6} color="#ffe600" />
 
-      <Float speed={1.4} rotationIntensity={0.5} floatIntensity={1.1}>
-        <CoreShape />
-      </Float>
+        <Float speed={1.4} rotationIntensity={0.5} floatIntensity={1.1}>
+          <CoreShape />
+        </Float>
 
-      <Particles count={1100} />
-    </Canvas>
+        <Particles count={count} />
+      </Canvas>
+    </div>
   );
 }
 

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { revalidateTag } from "next/cache";
 import { db } from "@/lib/db";
 import { requireAdmin, logAudit } from "@/lib/session";
 import { handleErr, ok, bad, parseBody } from "@/lib/admin-route";
@@ -44,6 +45,8 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
     if (v.published !== undefined) data.published = v.published;
     const updated = await db.student.update({ where: { id }, data });
     await logAudit("update", "Student", updated.id, {});
+    revalidateTag("students", "max");
+    revalidateTag("stats", "max");
     return ok(updated);
   });
 }
@@ -54,6 +57,8 @@ export async function DELETE(_req: Request, { params }: { params: Promise<{ id: 
     const { id } = await params;
     const deleted = await db.student.delete({ where: { id } });
     await logAudit("delete", "Student", deleted.id, {});
+    revalidateTag("students", "max");
+    revalidateTag("stats", "max");
     return ok({ ok: true });
   });
 }

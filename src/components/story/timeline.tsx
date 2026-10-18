@@ -119,7 +119,7 @@ function Chapter({
   return (
     <article
       ref={ref}
-      className="relative overflow-hidden md:grid md:grid-cols-2 md:items-center md:gap-12 md:overflow-visible"
+      className="cv-auto relative overflow-hidden md:grid md:grid-cols-2 md:items-center md:gap-12 md:overflow-visible"
     >
       {/* Year backdrop */}
       {chapter.year ? (
