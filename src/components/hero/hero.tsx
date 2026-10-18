@@ -200,16 +200,16 @@ export function Hero({
             {tagline}
           </motion.p>
 
-          {/* CTA buttons */}
+          {/* CTA buttons — stack on phones, row on sm+ */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 1.6, duration: 0.7 }}
-            className="mt-8 flex flex-wrap items-center gap-3"
+            className="mt-8 flex flex-col items-stretch gap-3 sm:flex-row sm:flex-wrap sm:items-center"
           >
             <MagneticButton
               href="/story"
-              className="bg-primary text-primary-foreground hover:glow-primary rounded-full px-7 py-4 text-sm font-semibold sm:px-8"
+              className="bg-primary text-primary-foreground hover:glow-primary min-h-[44px] rounded-full px-7 py-3.5 text-sm font-semibold sm:px-8"
             >
               Enter the story
               <ArrowRight className="ml-2 h-4 w-4" />
@@ -217,7 +217,7 @@ export function Hero({
             <MagneticButton
               href="/moments"
               strength={0.3}
-              className="glass text-foreground hover:glow-primary rounded-full px-7 py-4 text-sm font-semibold sm:px-8"
+              className="glass text-foreground hover:glow-primary min-h-[44px] rounded-full px-7 py-3.5 text-sm font-semibold sm:px-8"
             >
               <Play className="mr-2 h-3.5 w-3.5 fill-current" />
               Live moments
@@ -237,9 +237,8 @@ export function Hero({
       </div>
 
       {/* ------------------------------------------------------------ */}
-      {/*  Slide title — bottom-right, small uppercase tracking         */}
-      {/*  (Repositioned so it never overlaps the batch title at any    */}
-      {/*   viewport 360px → 1440px)                                     */}
+      {/*  Slide label — hidden on phones to prevent overlap with the   */}
+      {/*  countdown grid; shows above sm breakpoint where space allows. */}
       {/* ------------------------------------------------------------ */}
       {slideTitle && (
         <AnimatePresence mode="wait">
@@ -249,7 +248,7 @@ export function Hero({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.6, ease: "easeInOut" }}
-            className="absolute bottom-6 right-4 z-10 max-w-[55vw] text-right sm:bottom-8 sm:right-6 lg:right-8"
+            className="absolute bottom-6 right-4 z-10 hidden max-w-[55vw] text-right sm:bottom-8 sm:right-6 sm:block lg:right-8"
           >
             <span className="block text-[0.55rem] uppercase tracking-[0.35em] text-muted-foreground sm:text-[0.65rem]">
               Chapter {String((index % safeSlides.length) + 1).padStart(2, "0")}

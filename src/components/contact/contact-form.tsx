@@ -195,11 +195,11 @@ export function ContactForm() {
           />
         </div>
 
-        <div className="mt-2 flex items-center justify-between gap-4">
+        <div className="mt-2 flex flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
           <p className="text-xs text-muted-foreground">
             By sending, you agree to be contacted back about your message.
           </p>
-          <MagneticButton className="h-12 rounded-full bg-primary px-6 font-semibold text-primary-foreground glow-primary">
+          <MagneticButton className="h-12 min-h-[44px] shrink-0 justify-center rounded-full bg-primary px-6 font-semibold text-primary-foreground glow-primary">
             {submitting ? (
               <Loader2 className="size-5 animate-spin" />
             ) : (

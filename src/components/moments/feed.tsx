@@ -303,11 +303,11 @@ export function Feed({ initialItems, initialCursor }: Props) {
             initial={{ opacity: 0, y: -16, scale: 0.96 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -16, scale: 0.96 }}
-            className="fixed left-1/2 top-20 z-40 -translate-x-1/2"
+            className="fixed left-1/2 top-20 z-40 w-[calc(100vw-2rem)] max-w-sm -translate-x-1/2"
           >
             <button
               onClick={showNew}
-              className="glass-strong flex items-center gap-3 rounded-full border border-primary/40 px-4 py-2 shadow-lg shadow-primary/20 hover:glow-primary"
+              className="glass-strong flex w-full items-center justify-center gap-3 rounded-full border border-primary/40 px-4 py-2 shadow-lg shadow-primary/20 hover:glow-primary"
             >
               <span className="relative flex h-2 w-2">
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />

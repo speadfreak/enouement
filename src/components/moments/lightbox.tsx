@@ -123,7 +123,7 @@ export function Lightbox({ items, index, onClose, onIndexChange }: Props) {
             <button
               onClick={onClose}
               aria-label="Close"
-              className="flex h-10 w-10 items-center justify-center rounded-full glass-strong hover:glow-primary"
+              className="flex h-11 w-11 items-center justify-center rounded-full glass-strong hover:glow-primary"
             >
               <X className="h-4 w-4" />
             </button>
@@ -227,19 +227,19 @@ export function Lightbox({ items, index, onClose, onIndexChange }: Props) {
           </div>
 
           {/* Mobile bottom nav hint */}
-          <div className="flex items-center justify-between px-6 pb-6 sm:hidden">
+          <div className="flex items-center justify-between gap-2 px-4 pb-6 sm:px-6 sm:hidden">
             <button
               onClick={goPrev}
               disabled={index === 0}
               aria-label="Previous"
               className={cn(
-                "flex h-12 w-12 items-center justify-center rounded-full glass-strong",
+                "flex h-12 w-12 shrink-0 items-center justify-center rounded-full glass-strong",
                 index === 0 ? "opacity-30" : "hover:glow-primary"
               )}
             >
               <ChevronLeft className="h-5 w-5" />
             </button>
-            <span className="text-xs uppercase tracking-[0.3em] text-muted-foreground">
+            <span className="text-[0.6rem] uppercase tracking-[0.2em] text-muted-foreground">
               Swipe to navigate
             </span>
             <button
@@ -247,7 +247,7 @@ export function Lightbox({ items, index, onClose, onIndexChange }: Props) {
               disabled={index === items.length - 1}
               aria-label="Next"
               className={cn(
-                "flex h-12 w-12 items-center justify-center rounded-full glass-strong",
+                "flex h-12 w-12 shrink-0 items-center justify-center rounded-full glass-strong",
                 index === items.length - 1 ? "opacity-30" : "hover:glow-primary"
               )}
             >

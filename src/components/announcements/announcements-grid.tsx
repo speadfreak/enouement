@@ -90,12 +90,12 @@ export function AnnouncementsGrid({
     <div>
       {/* Filter chips */}
       {categories.length > 0 && (
-        <div className="mb-8 flex flex-wrap gap-2">
+        <div className="no-scrollbar -mx-1 mb-8 flex items-center gap-2 overflow-x-auto px-1 pb-2">
           <button
             type="button"
             onClick={() => setActive("all")}
             aria-pressed={active === "all"}
-            className={`rounded-full border px-4 py-1.5 text-xs font-medium uppercase tracking-wider transition ${
+            className={`min-h-[40px] shrink-0 rounded-full border px-4 py-1.5 text-xs font-medium uppercase tracking-wider transition ${
               active === "all"
                 ? "border-primary bg-primary text-primary-foreground"
                 : "border-border bg-surface/40 text-muted-foreground hover:border-primary/50 hover:text-foreground"
@@ -109,7 +109,7 @@ export function AnnouncementsGrid({
               type="button"
               onClick={() => setActive(c)}
               aria-pressed={active === c}
-              className={`rounded-full border px-4 py-1.5 text-xs font-medium uppercase tracking-wider transition ${
+              className={`min-h-[40px] shrink-0 rounded-full border px-4 py-1.5 text-xs font-medium uppercase tracking-wider transition ${
                 active === c
                   ? "border-primary bg-primary text-primary-foreground"
                   : "border-border bg-surface/40 text-muted-foreground hover:border-primary/50 hover:text-foreground"

@@ -27,7 +27,9 @@
  *   - Whole overlay fades to opacity 0
  *   - Duration 0.7 s, ease [0.76, 0, 0.24, 1]
  *
- * Session: shown once per session (sessionStorage `enouement_loaded`).
+ * Shows on EVERY full page load (refresh / direct navigation). In-app
+ * client-side route transitions do NOT remount the layout, so the intro
+ * only plays on a real document load — not on every link click.
  * Total: ~2.2 s full, ~0.8 s reduced.
  */
 
@@ -62,8 +64,6 @@ const SWEEP_DURATION = 0.9; // s
 const PRIMARY = "#ffe600";
 const SECONDARY = "#00c853";
 const ACCENT = "#b9f6ca";
-
-const SESSION_KEY = "enouement_loaded";
 
 /* ------------------------------------------------------------------ */
 /*  Scoped CSS — injected once while the preloader is mounted            */
@@ -268,11 +268,11 @@ export function Preloader() {
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    // Already shown this session — bail out immediately.
-    if (sessionStorage.getItem(SESSION_KEY)) {
-      setPhase("done");
-      return;
-    }
+    // Show on EVERY full page load (refresh / direct navigation). No session
+    // gating — the intro is part of the cinematic experience and should
+    // replay whenever the browser reloads the document. (Client-side route
+    // transitions via next/link do NOT remount the layout, so this only fires
+    // on a real document load, not on in-app navigation.)
 
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
     const hasReduceClass =
@@ -356,11 +356,6 @@ export function Preloader() {
     exitStartRef.current = performance.now();
     const id = window.setTimeout(
       () => {
-        try {
-          sessionStorage.setItem(SESSION_KEY, "1");
-        } catch {
-          /* sessionStorage may be unavailable — ignore */
-        }
         setPhase("done");
       },
       (EXIT_DURATION + EXIT_DELAY_BUFFER) * 1000,

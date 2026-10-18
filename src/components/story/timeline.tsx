@@ -119,7 +119,7 @@ function Chapter({
   return (
     <article
       ref={ref}
-      className="relative md:grid md:grid-cols-2 md:items-center md:gap-12"
+      className="relative overflow-hidden md:grid md:grid-cols-2 md:items-center md:gap-12 md:overflow-visible"
     >
       {/* Year backdrop */}
       {chapter.year ? (
@@ -127,7 +127,7 @@ function Chapter({
           aria-hidden
           className="pointer-events-none absolute inset-0 flex items-center justify-center opacity-[0.05] md:opacity-[0.07]"
         >
-          <span className="font-display text-[10rem] font-black leading-none sm:text-[16rem] lg:text-[22rem]">
+          <span className="font-display text-[7rem] font-black leading-none sm:text-[10rem] lg:text-[16rem] xl:text-[22rem]">
             {chapter.year}
           </span>
         </div>

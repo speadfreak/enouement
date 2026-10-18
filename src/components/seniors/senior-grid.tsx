@@ -1031,7 +1031,7 @@ function ProfileDialog({
   return (
     <Dialog open={!!senior} onOpenChange={(o) => !o && onClose()}>
       <DialogContent
-        className="max-w-3xl overflow-hidden border-border p-0 overscroll-contain"
+        className="max-w-3xl border-border p-0 sm:max-w-3xl overscroll-contain"
         data-lenis-prevent
       >
         {senior ? (
@@ -1045,7 +1045,7 @@ function ProfileDialog({
             </DialogDescription>
             <div className="grid grid-cols-1 sm:grid-cols-2">
               {/* Photo */}
-              <div className="relative aspect-[3/4] sm:aspect-auto">
+              <div className="relative aspect-[3/4] overflow-hidden sm:aspect-auto">
                 <SmartImage
                   src={senior.photoUrl ?? ""}
                   alt={senior.name}

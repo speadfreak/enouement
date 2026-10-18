@@ -113,7 +113,7 @@ export function CountdownHero({ headline, intro, countdownDate }: Props) {
         <AnimatedText
           as="h1"
           text={headline}
-          className="mt-6 font-display text-6xl font-black leading-[0.9] tracking-tighter sm:text-8xl lg:text-9xl"
+          className="mt-6 break-words font-display text-5xl font-black leading-[0.9] tracking-tighter sm:text-7xl lg:text-9xl"
         />
 
         <motion.p

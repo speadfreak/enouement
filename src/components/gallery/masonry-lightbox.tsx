@@ -117,23 +117,23 @@ export function MasonryLightbox({ album, onClose }: Props) {
           className="fixed inset-0 z-[80] flex flex-col bg-background/95 backdrop-blur-xl"
         >
           {/* Top bar */}
-          <div className="flex items-center justify-between px-4 py-4 sm:px-6">
-            <div className="flex items-center gap-3">
+          <div className="flex items-center justify-between gap-3 px-4 py-4 sm:px-6">
+            <div className="flex min-w-0 items-center gap-3">
               <Badge
                 variant="secondary"
-                className="rounded-full uppercase tracking-wider"
+                className="shrink-0 rounded-full uppercase tracking-wider"
               >
                 <Layers className="h-3 w-3" />
                 {album.media.length} photos
               </Badge>
-              <h2 className="font-display text-lg font-bold sm:text-xl">
+              <h2 className="truncate font-display text-base font-bold sm:text-lg md:text-xl">
                 {album.title}
               </h2>
             </div>
             <button
               onClick={onClose}
               aria-label="Close album"
-              className="flex h-10 w-10 items-center justify-center rounded-full glass-strong hover:glow-primary"
+              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full glass-strong hover:glow-primary"
             >
               <X className="h-4 w-4" />
             </button>
@@ -146,8 +146,12 @@ export function MasonryLightbox({ album, onClose }: Props) {
             </p>
           )}
 
-          {/* Masonry */}
-          <div className="flex-1 overflow-y-auto px-4 pb-6 sm:px-6">
+          {/* Masonry — scrollable with mouse + touch, Lenis doesn't hijack */}
+          <div
+            className="flex-1 overflow-y-auto px-4 pb-6 sm:px-6"
+            data-lenis-prevent
+            style={{ overscrollBehavior: "contain" } as React.CSSProperties}
+          >
             <div className="columns-2 gap-3 sm:columns-3 lg:columns-4 [column-fill:_balance]">
               {album.media.map((m, i) => (
                 <motion.button
@@ -205,7 +209,7 @@ export function MasonryLightbox({ album, onClose }: Props) {
                   <button
                     onClick={() => setActiveIndex(-1)}
                     aria-label="Back to album"
-                    className="flex h-10 w-10 items-center justify-center rounded-full glass-strong hover:glow-primary"
+                    className="flex h-11 w-11 items-center justify-center rounded-full glass-strong hover:glow-primary"
                   >
                     <X className="h-4 w-4" />
                   </button>
@@ -268,19 +272,19 @@ export function MasonryLightbox({ album, onClose }: Props) {
                 </div>
 
                 {/* Mobile bottom nav */}
-                <div className="flex items-center justify-between px-6 pb-6 sm:hidden">
+                <div className="flex items-center justify-between gap-2 px-4 pb-6 sm:px-6 sm:hidden">
                   <button
                     onClick={goPrev}
                     disabled={activeIndex === 0}
                     aria-label="Previous"
                     className={cn(
-                      "flex h-12 w-12 items-center justify-center rounded-full glass-strong",
+                      "flex h-12 w-12 shrink-0 items-center justify-center rounded-full glass-strong",
                       activeIndex === 0 ? "opacity-30" : "hover:glow-primary"
                     )}
                   >
                     <ChevronLeft className="h-5 w-5" />
                   </button>
-                  <span className="text-xs uppercase tracking-[0.3em] text-muted-foreground">
+                  <span className="text-[0.6rem] uppercase tracking-[0.2em] text-muted-foreground">
                     Swipe to navigate
                   </span>
                   <button
@@ -288,7 +292,7 @@ export function MasonryLightbox({ album, onClose }: Props) {
                     disabled={activeIndex === album.media.length - 1}
                     aria-label="Next"
                     className={cn(
-                      "flex h-12 w-12 items-center justify-center rounded-full glass-strong",
+                      "flex h-12 w-12 shrink-0 items-center justify-center rounded-full glass-strong",
                       activeIndex === album.media.length - 1
                         ? "opacity-30"
                         : "hover:glow-primary"

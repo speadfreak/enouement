@@ -60,10 +60,10 @@ export function WallOfSeniors({ seniors }: Props) {
       </div>
 
       <Dialog open={!!active} onOpenChange={(o) => !o && setActive(null)}>
-        <DialogContent className="max-w-3xl overflow-hidden border-border p-0 sm:max-w-3xl">
+        <DialogContent className="max-w-3xl border-border p-0 sm:max-w-3xl">
           <DialogTitle className="sr-only">{active?.name}</DialogTitle>
           <div className="grid grid-cols-1 sm:grid-cols-2">
-            <div className="relative aspect-[3/4] sm:aspect-auto">
+            <div className="relative aspect-[3/4] overflow-hidden sm:aspect-auto">
               {active ? (
                 <SmartImage
                   src={active.photoUrl ?? ""}

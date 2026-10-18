@@ -86,7 +86,7 @@ export function StatsCounter({ stats }: Props) {
                   {s.icon}
                 </div>
               )}
-              <div className="relative font-display text-5xl font-extrabold tracking-tight sm:text-6xl">
+              <div className="relative font-display text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl">
                 <Counter value={s.value} suffix={s.suffix} />
               </div>
               <div className="mt-3 text-xs uppercase tracking-[0.25em] text-muted-foreground sm:text-sm">

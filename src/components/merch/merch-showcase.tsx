@@ -173,7 +173,7 @@ function MerchRow({ item, index }: { item: MerchItem; index: number }) {
                       aria-label={`Select color ${c}`}
                       aria-pressed={selected}
                       className={cn(
-                        "relative size-10 rounded-full border-2 transition",
+                        "relative size-11 rounded-full border-2 transition",
                         selected
                           ? "border-primary"
                           : "border-border hover:border-primary/60"
@@ -220,7 +220,7 @@ function MerchRow({ item, index }: { item: MerchItem; index: number }) {
                       onClick={() => setActiveSize(s)}
                       aria-pressed={selected}
                       className={cn(
-                        "min-w-[3rem] rounded-lg border px-4 py-2 text-sm font-semibold transition",
+                        "min-h-[44px] min-w-[3rem] rounded-lg border px-4 py-2 text-sm font-semibold transition",
                         selected
                           ? "border-primary bg-primary text-primary-foreground"
                           : "border-border bg-surface/40 text-foreground hover:border-primary/60"

@@ -160,8 +160,12 @@ export function AlbumGrid({ albums }: { albums: AlbumItem[] }) {
 
   return (
     <div className="space-y-8">
-      {/* Filter chips */}
-      <div className="no-scrollbar flex items-center gap-2 overflow-x-auto pb-1">
+      {/* Filter chips — scrollable on touch/mouse, Lenis doesn't hijack */}
+      <div
+        className="no-scrollbar -mx-1 flex items-center gap-2 overflow-x-auto px-1 pb-2"
+        data-lenis-prevent
+        style={{ overscrollBehavior: "contain" } as React.CSSProperties}
+      >
         {categories.map((cat) => {
           const isActive = active === cat;
           const label = cat === "all" ? "All Albums" : categoryLabel(cat);

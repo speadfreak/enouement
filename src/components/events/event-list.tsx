@@ -419,7 +419,7 @@ function CalendarView({ events }: { events: EventItem[] }) {
               type="button"
               onClick={() => shiftMonth(-1)}
               aria-label="Previous month"
-              className="glass-strong flex size-10 items-center justify-center rounded-lg text-foreground transition hover:text-primary"
+              className="glass-strong flex size-11 items-center justify-center rounded-lg text-foreground transition hover:text-primary"
             >
               ‹
             </button>
@@ -427,7 +427,7 @@ function CalendarView({ events }: { events: EventItem[] }) {
               type="button"
               onClick={() => shiftMonth(1)}
               aria-label="Next month"
-              className="glass-strong flex size-10 items-center justify-center rounded-lg text-foreground transition hover:text-primary"
+              className="glass-strong flex size-11 items-center justify-center rounded-lg text-foreground transition hover:text-primary"
             >
               ›
             </button>
@@ -562,9 +562,9 @@ export function EventList({ events }: { events: EventItem[] }) {
             Switch between a story timeline and a month grid.
           </p>
         </div>
-        <TabsList>
-          <TabsTrigger value="timeline">Timeline</TabsTrigger>
-          <TabsTrigger value="calendar">Calendar</TabsTrigger>
+        <TabsList className="h-11">
+          <TabsTrigger value="timeline" className="min-h-[40px] px-4">Timeline</TabsTrigger>
+          <TabsTrigger value="calendar" className="min-h-[40px] px-4">Calendar</TabsTrigger>
         </TabsList>
       </div>
 

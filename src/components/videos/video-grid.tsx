@@ -248,7 +248,7 @@ function PlayerDialog({
                 <button
                   onClick={onClose}
                   aria-label="Close player"
-                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full glass hover:glow-primary"
+                  className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full glass hover:glow-primary"
                 >
                   <X className="h-4 w-4" />
                 </button>

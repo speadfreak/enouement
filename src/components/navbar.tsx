@@ -18,7 +18,7 @@ export function Navbar({ links = [] }: { links?: NavLink[] }) {
   useEffect(() => {
     const on = () => setScrolled(window.scrollY > 40);
     on();
-    window.addEventListener("scroll", on);
+    window.addEventListener("scroll", on, { passive: true });
     return () => window.removeEventListener("scroll", on);
   }, []);
 
@@ -43,15 +43,17 @@ export function Navbar({ links = [] }: { links?: NavLink[] }) {
           scrolled ? "glass-strong border-b border-border/60" : "bg-transparent"
         }`}
       >
-        <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8 safe-t">
-          {/* Logo */}
-          <Link href="/" className="group flex items-center gap-2" aria-label="Home">
-            <span className="relative flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-primary to-secondary text-primary-foreground shadow-lg">
+        <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-2 px-3 sm:px-6 lg:px-8 safe-t">
+          {/* Logo — shrinks gracefully on small screens */}
+          <Link href="/" className="group flex shrink-0 items-center gap-2" aria-label="Home">
+            <span className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary to-secondary text-primary-foreground shadow-lg">
               <Sparkles className="h-4 w-4" />
               <span className="absolute inset-0 animate-pulse-glow rounded-full" />
             </span>
-            <span className="font-display text-lg font-extrabold tracking-tight">
-              ENOUEMENT<span className="text-primary">2K27</span>
+            <span className="font-display text-base font-extrabold tracking-tight sm:text-lg">
+              <span className="hidden min-[400px]:inline">ENOUEMENT</span>
+              <span className="min-[400px]:hidden">E2</span>
+              <span className="text-primary">2K27</span>
             </span>
           </Link>
 
@@ -80,16 +82,18 @@ export function Navbar({ links = [] }: { links?: NavLink[] }) {
             })}
           </div>
 
-          {/* Right */}
-          <div className="flex items-center gap-2">
-            <ReduceEffectsToggle className="hidden sm:flex" />
+          {/* Right controls — touch targets ≥44px, never collide */}
+          <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
+            {/* Reduce effects — only on larger screens (tablet+), hidden on phones to save space */}
+            <ReduceEffectsToggle className="hidden md:flex" />
             <ThemeToggle />
+            {/* Hamburger — 44px touch target, visible below lg (1024px) */}
             <button
               aria-label="Open menu"
               onClick={() => setOpen(true)}
-              className="flex h-9 w-9 items-center justify-center rounded-full glass lg:hidden"
+              className="flex h-11 w-11 items-center justify-center rounded-full glass lg:hidden"
             >
-              <Menu className="h-4 w-4" />
+              <Menu className="h-5 w-5" />
             </button>
           </div>
         </nav>
@@ -103,21 +107,35 @@ export function Navbar({ links = [] }: { links?: NavLink[] }) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-[70] flex flex-col bg-background lg:hidden"
+            style={{ overscrollBehavior: "contain" }}
           >
-            <div className="flex h-16 items-center justify-between px-4">
+            {/* Smoky backdrop for the mobile menu */}
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-0 opacity-40"
+              style={{
+                background:
+                  "radial-gradient(60% 50% at 20% 0%, rgba(255,230,0,0.15), transparent), radial-gradient(50% 40% at 80% 100%, rgba(0,200,83,0.15), transparent)",
+              }}
+            />
+            <div className="relative flex h-16 items-center justify-between px-4 safe-t">
               <span className="font-display text-lg font-extrabold">
                 ENOUEMENT<span className="text-primary">2K27</span>
               </span>
               <button
                 aria-label="Close menu"
                 onClick={() => setOpen(false)}
-                className="flex h-9 w-9 items-center justify-center rounded-full glass"
+                className="flex h-11 w-11 items-center justify-center rounded-full glass"
               >
-                <X className="h-4 w-4" />
+                <X className="h-5 w-5" />
               </button>
             </div>
 
-            <div className="flex flex-1 flex-col justify-center gap-1 px-6">
+            <div
+              className="relative flex flex-1 flex-col justify-center gap-1 overflow-y-auto px-6 py-4"
+              style={{ overscrollBehavior: "contain" }}
+              data-lenis-prevent
+            >
               {links.map((l, i) => (
                 <motion.div
                   key={l.href}
@@ -127,17 +145,23 @@ export function Navbar({ links = [] }: { links?: NavLink[] }) {
                 >
                   <Link
                     href={l.href}
-                    className="block border-b border-border/40 py-4 font-display text-4xl font-bold tracking-tight"
+                    className="flex min-h-[52px] items-center border-b border-border/40 py-3 font-display text-3xl font-bold tracking-tight sm:text-4xl"
                   >
-                    <span className="mr-3 text-sm text-primary">0{i + 1}</span>
+                    <span className="mr-3 text-xs text-primary">0{i + 1}</span>
                     {l.label}
                   </Link>
                 </motion.div>
               ))}
             </div>
 
-            <div className="px-6 pb-10 text-xs uppercase tracking-widest text-muted-foreground">
-              Class of 2027 · Ethiopia
+            <div className="relative flex items-center justify-between gap-3 px-6 pb-8 pt-4 safe-b">
+              <div className="flex items-center gap-2">
+                <ReduceEffectsToggle />
+                <ThemeToggle />
+              </div>
+              <span className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
+                Class of 2027 · Ethiopia
+              </span>
             </div>
           </motion.div>
         )}
@@ -145,4 +169,3 @@ export function Navbar({ links = [] }: { links?: NavLink[] }) {
     </>
   );
 }
-
