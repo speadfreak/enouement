@@ -464,3 +464,77 @@ export const getDeveloperLinks = unstable_cache(
   ["data:dev-links"],
   { tags: ["dev-links"], revalidate: 300 }
 );
+
+// ---------------------------------------------------------------------------
+// Footer link groups (admin-managed Explore / Experience / Batch columns)
+// ---------------------------------------------------------------------------
+
+export const getFooterLinkGroups = unstable_cache(
+  async () => {
+    return db.footerLinkGroup.findMany({
+      where: { visible: true },
+      include: {
+        links: { orderBy: { order: "asc" } },
+      },
+      orderBy: { order: "asc" },
+    });
+  },
+  ["data:footer-links"],
+  { tags: ["footer-links"], revalidate: 300 }
+);
+
+// ---------------------------------------------------------------------------
+// Memory wall (approved messages)
+// ---------------------------------------------------------------------------
+
+export const getApprovedMemoryMessages = unstable_cache(
+  async (limit = 20) => {
+    const take = Math.max(1, Math.min(limit, 100));
+    return db.memoryWallMessage.findMany({
+      where: { status: "APPROVED" },
+      orderBy: { createdAt: "desc" },
+      take,
+    });
+  },
+  ["data:memory-wall"],
+  { tags: ["memory-wall"], revalidate: 30 }
+);
+
+// ---------------------------------------------------------------------------
+// Visit counter
+// ----------------------------------------------------------------------------
+
+export const getVisitCount = unstable_cache(
+  async () => {
+    const row = await db.visitCounter.findUnique({ where: { id: "visits" } });
+    if (!row) {
+      return {
+        id: "visits",
+        count: 0,
+        month: new Date().toISOString().slice(0, 7),
+        updatedAt: new Date(0),
+      };
+    }
+    return row;
+  },
+  ["data:visits"],
+  { tags: ["visits"], revalidate: 60 }
+);
+
+/**
+ * Increment the visit counter. NOT cached — intended to be called once per
+ * page load (server-side via PageShell's `after()` hook) or via an API route.
+ * Best-effort: swallows errors so analytics never breaks a render.
+ */
+export async function incrementVisitCount(): Promise<void> {
+  const month = new Date().toISOString().slice(0, 7);
+  try {
+    await db.visitCounter.upsert({
+      where: { id: "visits" },
+      update: { count: { increment: 1 }, month },
+      create: { id: "visits", count: 1, month },
+    });
+  } catch {
+    /* analytics best-effort — never throw on a counter failure */
+  }
+}
