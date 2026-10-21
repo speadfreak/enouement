@@ -98,13 +98,76 @@ model SiteSetting {
   socialLinks   Json     @default("{}")
   contactInfo   Json     @default("{}")
   footerText    String   @default("Énouement 2K27 — Class of 2027. Made with love.")
+  footerBlurb   String   @default("A cinematic memory of the senior batch — every moment, every face, every story, preserved forever.")
   // Developer credit (admin-editable)
   devName       String   @default("Joseph James")
   devRole       String   @default("Full-Stack Developer")
   devLink       String?
+  // Feature toggles (footer round 5)
+  memoryWallEnabled  Boolean @default(true)
+  shareEnabled       Boolean @default(true)
+  installEnabled     Boolean @default(true)
+  soundEnabled       Boolean @default(true)
+  easterEggEnabled   Boolean @default(true)
+  liveCounterEnabled Boolean @default(true)
+  ribbonEnabled      Boolean @default(false)
+  // Announcement ribbon
+  ribbonText    String?
+  ribbonLink    String?
+  ribbonColor   String   @default("#FFE600")
+  ribbonExpiry  DateTime?
   updatedAt     DateTime @updatedAt
 
   @@map("site_settings")
+}
+
+model FooterLinkGroup {
+  id        String   @id @default(cuid())
+  title     String   @default("Explore")
+  order     Int      @default(0)
+  visible   Boolean  @default(true)
+  links     FooterLink[]
+
+  @@map("footer_link_groups")
+  @@index([order])
+}
+
+model FooterLink {
+  id        String   @id @default(cuid())
+  groupId   String
+  label     String
+  href      String
+  isNew     Boolean  @default(false)
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  group     FooterLinkGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  @@map("footer_links")
+  @@index([groupId])
+  @@index([order])
+}
+
+model MemoryWallMessage {
+  id        String   @id @default(cuid())
+  name      String   @default("Anonymous")
+  message   String
+  status    String   @default("PENDING") // PENDING | APPROVED | REJECTED
+  ip        String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("memory_wall_messages")
+  @@index([status])
+  @@index([createdAt])
+}
+
+model VisitCounter {
+  id        String   @id @default("visits")
+  count     Int      @default(0)
+  month     String   @default("")
+  updatedAt DateTime @updatedAt
+
+  @@map("visit_counters")
 }
 
 model DeveloperLink {
