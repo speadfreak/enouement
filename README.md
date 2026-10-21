@@ -1,4 +1,4 @@
-# 🎬 ENOUEMENT 2K27
+# 🎬 ÉNOUEMENT 2K27
 
 > A cinematic, immersive digital memory of the senior batch — **Class of 2027, Ethiopia**.
 > Not a normal school website. A movie trailer meets a premium agency site. Every screen makes people say *wow*.
@@ -156,7 +156,7 @@ See **[DEPLOYMENT.md](./DEPLOYMENT.md)** for the full Vercel + Neon guide.
 
 ## 🎨 Credits
 
-**Enouement 2K27 — Class of 2027, Ethiopia.** 🟡🟢
+**Énouement 2K27 — Class of 2027, Ethiopia.** 🟡🟢
 
 Crafted with obsessive attention to detail. Made with 💛💚.
 

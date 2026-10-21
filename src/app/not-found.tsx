@@ -5,7 +5,7 @@ import { MagneticButton } from "@/components/magnetic-button";
 export const metadata = {
   title: "Lost in the Memory — 404",
   description:
-    "This page drifted off the timeline. Find your way back to the story of Enouement 2K27.",
+    "This page drifted off the timeline. Find your way back to the story of Énouement 2K27.",
 };
 
 export default function NotFound() {
@@ -91,7 +91,7 @@ export default function NotFound() {
         </div>
 
         <p className="mt-12 text-[0.65rem] uppercase tracking-[0.3em] text-muted-foreground">
-          Enouement 2K27 · Ethiopia
+          Énouement 2K27 · Ethiopia
         </p>
       </div>
     </main>

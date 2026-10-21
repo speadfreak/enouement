@@ -80,7 +80,7 @@ function LoginForm() {
               E2
             </div>
             <div>
-              <p className="font-display text-xl font-bold tracking-tight">ENOUEMENT</p>
+              <p className="font-display text-xl font-bold tracking-tight">ÉNOUEMENT</p>
               <p className="text-[10px] uppercase tracking-[0.4em] text-primary/80">2K27 Admin</p>
             </div>
           </div>
@@ -129,7 +129,7 @@ function LoginForm() {
                 E2
               </div>
               <div>
-                <p className="font-display text-lg font-bold">ENOUEMENT 2K27</p>
+                <p className="font-display text-lg font-bold">ÉNOUEMENT 2K27</p>
                 <p className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground">Admin Console</p>
               </div>
             </div>

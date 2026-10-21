@@ -178,7 +178,7 @@ export function AnnouncementsManager({ initial }: { initial: Announcement[] }) {
     <>
       <PageHeader
         title="Announcements"
-        description="News, alerts and updates for the Enouement community."
+        description="News, alerts and updates for the Énouement community."
         action={
           <Button onClick={() => setOpenCreate(true)} className="bg-primary text-primary-foreground hover:bg-primary/90">
             <Plus className="size-4" />

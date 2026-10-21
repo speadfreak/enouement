@@ -72,7 +72,7 @@ function FooterLinkColumn({
 }
 
 export async function Footer({ site, navLinks, developerLinks }: Props) {
-  const siteName = site?.siteName ?? "Enouement 2K27";
+  const siteName = site?.siteName ?? "Énouement 2K27";
   const tagline = site?.tagline ?? "";
   const footerText = site?.footerText ?? "";
   const socialLinks = site?.socialLinks ?? {};
@@ -109,7 +109,7 @@ export async function Footer({ site, navLinks, developerLinks }: Props) {
 
         {/* Marquee strip */}
         <Marquee
-          text="CLASS OF 2027 · THE FINAL CHAPTER · ETHIOPIA · ENOUEMENT 2K27"
+          text="CLASS OF 2027 · THE FINAL CHAPTER · ETHIOPIA · ÉNOUEMENT 2K27"
           duration={36}
           className="mb-16"
         />

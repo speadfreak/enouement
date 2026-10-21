@@ -12,10 +12,9 @@ export const revalidate = 60;
 export const metadata: Metadata = {
   title: "Gallery — Frozen in Time",
   description:
-    "Curated albums from the Enouement 2K27 journey. Each frame, a memory — each memory, a piece of us.",
+    "Curated albums from the Énouement 2K27 journey. Each frame, a memory — each memory, a piece of us.",
 };
 
-export const dynamic = "force-dynamic";
 
 export default async function GalleryPage() {
   const albums = await getAlbums();
@@ -27,7 +26,8 @@ export default async function GalleryPage() {
     coverUrl: a.coverUrl,
     category: a.category,
     order: a.order,
-    createdAt: a.createdAt.toISOString(),
+    // unstable_cache JSON-serializes Dates to strings, so guard with `new Date()`
+    createdAt: new Date(a.createdAt).toISOString(),
     media: a.media.map((m) => ({
       id: m.id,
       url: m.url,

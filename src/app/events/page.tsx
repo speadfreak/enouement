@@ -11,7 +11,7 @@ export const revalidate = 60;
 export const metadata: Metadata = {
   title: "Events",
   description:
-    "The calendar of Enouement 2K27 — every senior event, farewell, and the final walk.",
+    "The calendar of Énouement 2K27 — every senior event, farewell, and the final walk.",
 };
 
 export default async function EventsPage() {

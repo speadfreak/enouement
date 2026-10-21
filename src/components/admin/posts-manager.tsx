@@ -55,7 +55,7 @@ const EMPTY = {
   mediaType: "image",
   pinned: false,
   published: true,
-  authorName: "Enouement 2K27",
+  authorName: "Énouement 2K27",
 };
 
 export function PostsManager({ initial }: { initial: Post[] }) {
@@ -158,7 +158,7 @@ export function PostsManager({ initial }: { initial: Post[] }) {
     <>
       <PageHeader
         title="Moments"
-        description="Live feed posts shared by the Enouement team."
+        description="Live feed posts shared by the Énouement team."
         action={
           <Button onClick={() => setOpenCreate(true)} className="bg-primary text-primary-foreground hover:bg-primary/90">
             <Plus className="size-4" />

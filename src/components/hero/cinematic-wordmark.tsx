@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * CinematicWordmark — the hero title object for "ENOUEMENT 2K27".
+ * CinematicWordmark — the hero title object for "ÉNOUEMENT 2K27".
  *
  * Built as three stacked layers (outline / fill / glow) of the same text:
  *   1. Outline  — `-webkit-text-stroke` 1px transparent fill, muted stroke
@@ -40,7 +40,7 @@ if (typeof window !== "undefined") {
 /*  Constants                                                          */
 /* ------------------------------------------------------------------ */
 
-const LINE_1 = "ENOUEMENT".split("");
+const LINE_1 = "ÉNOUEMENT".split("");
 const LINE_2 = "2K27".split("");
 
 const PRIMARY = "#ffe600";
@@ -496,7 +496,7 @@ export function CinematicWordmark({ heroRef, className = "" }: Props) {
       <div
         ref={containerRef}
         className={`cw-root ${className}`}
-        aria-label="Enouement 2K27"
+        aria-label="Énouement 2K27"
         role="heading"
         aria-level={1}
       >

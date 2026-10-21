@@ -28,7 +28,7 @@ function serialize(item: Item) {
     published: item.published,
     authorName: item.authorName,
     likeCount: item.likeCount,
-    createdAt: item.createdAt.toISOString(),
+    createdAt: new Date(item.createdAt).toISOString(),
   };
 }
 

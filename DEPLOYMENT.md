@@ -1,4 +1,4 @@
-# 🚀 DEPLOYMENT — Enouement 2K27
+# 🚀 DEPLOYMENT — Énouement 2K27
 
 This guide gets the site live on **Vercel** with **Neon PostgreSQL** in under 15 minutes.
 
@@ -39,7 +39,7 @@ You can verify the admin was created by logging in locally at `http://localhost:
 ```bash
 git init
 git add .
-git commit -m "feat: Enouement 2K27 cinematic batch website"
+git commit -m "feat: Énouement 2K27 cinematic batch website"
 git branch -M main
 git remote add origin https://github.com/speadfreak/enouement.git
 git push -u origin main
@@ -119,4 +119,4 @@ You can also paste external image/video URLs directly into the "Paste URL" tab o
 
 ## ✅ You're live. 🟡🟢
 
-**Enouement 2K27 — Class of 2027, Ethiopia.** Made with 💛💚.
+**Énouement 2K27 — Class of 2027, Ethiopia.** Made with 💛💚.

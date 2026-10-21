@@ -7,12 +7,11 @@ import { getStudentsPaginated, getStudentStats } from "@/lib/data";
 export const revalidate = 60;
 
 export const metadata = {
-  title: "Seniors — Meet the Batch — Enouement 2K27",
+  title: "Seniors — Meet the Batch — Énouement 2K27",
   description:
     "Meet every face of the 2K27 senior batch — 700 students across Natural and Social streams. Search, filter, and discover the people who made our story.",
 };
 
-export const dynamic = "force-dynamic";
 
 export default async function SeniorsPage() {
   const [{ items, total }, stats] = await Promise.all([

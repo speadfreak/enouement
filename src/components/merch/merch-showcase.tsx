@@ -127,7 +127,7 @@ function MerchRow({ item, index }: { item: MerchItem; index: number }) {
         <div className="flex flex-col gap-5">
           <div>
             <p className="text-xs uppercase tracking-[0.3em] text-primary">
-              Enouement 2K27 · Batch Clothes
+              Énouement 2K27 · Batch Clothes
             </p>
             <h2 className="mt-2 font-display text-4xl font-extrabold leading-[0.95] tracking-tight sm:text-6xl">
               <span className="text-gradient">{item.name}</span>

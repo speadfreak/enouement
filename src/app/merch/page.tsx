@@ -11,7 +11,7 @@ export const revalidate = 60;
 export const metadata: Metadata = {
   title: "Merch",
   description:
-    "The official batch clothes of Enouement 2K27 — hoodies, tees, and the memories stitched in.",
+    "The official batch clothes of Énouement 2K27 — hoodies, tees, and the memories stitched in.",
 };
 
 export default async function MerchPage() {

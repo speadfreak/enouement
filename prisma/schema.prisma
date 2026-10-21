@@ -1,5 +1,5 @@
 // ============================================================================
-// ENOUEMENT 2K27 — Prisma schema (Neon PostgreSQL)
+// ÉNOUEMENT 2K27 — Prisma schema (Neon PostgreSQL)
 // ============================================================================
 
 generator client {
@@ -84,7 +84,7 @@ model VerificationToken {
 
 model SiteSetting {
   id            String   @id @default("site")
-  siteName      String   @default("Enouement 2K27")
+  siteName      String   @default("Énouement 2K27")
   tagline       String   @default("The Final Chapter — Class of 2027")
   description   String   @default("A cinematic memory of the senior batch, class of 2027, Ethiopia.")
   logoUrl       String?
@@ -97,7 +97,7 @@ model SiteSetting {
   countdownDate DateTime?
   socialLinks   Json     @default("{}")
   contactInfo   Json     @default("{}")
-  footerText    String   @default("Enouement 2K27 — Class of 2027. Made with love.")
+  footerText    String   @default("Énouement 2K27 — Class of 2027. Made with love.")
   // Developer credit (admin-editable)
   devName       String   @default("Joseph James")
   devRole       String   @default("Full-Stack Developer")
@@ -187,7 +187,7 @@ model Post {
   mediaType   String   @default("image") // image | video | mixed
   pinned      Boolean  @default(false)
   published   Boolean  @default(true)
-  authorName  String   @default("Enouement 2K27")
+  authorName  String   @default("Énouement 2K27")
   likeCount   Int      @default(0)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt

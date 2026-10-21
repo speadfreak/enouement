@@ -8,7 +8,7 @@ import { Feed } from "@/components/moments/feed";
 export const metadata: Metadata = {
   title: "Moments — Live Feed",
   description:
-    "Live moments, in real time. The pulse of Enouement 2K27 — every post, every face, every feeling.",
+    "Live moments, in real time. The pulse of Énouement 2K27 — every post, every face, every feeling.",
 };
 
 // ISR: regenerate at most every 60s. Client-side polling (see Feed.tsx)
@@ -28,7 +28,7 @@ export default async function MomentsPage() {
     published: p.published,
     authorName: p.authorName,
     likeCount: p.likeCount,
-    createdAt: p.createdAt.toISOString(),
+    createdAt: new Date(p.createdAt).toISOString(),
   }));
 
   return (

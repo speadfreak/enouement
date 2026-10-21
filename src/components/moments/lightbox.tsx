@@ -172,7 +172,7 @@ export function Lightbox({ items, index, onClose, onIndexChange }: Props) {
                     alt={post.caption}
                     fill
                     seed={post.id}
-                    fallbackLabel="Enouement 2K27"
+                    fallbackLabel="Énouement 2K27"
                     wrapperClassName="!absolute inset-0"
                     className="object-contain"
                     sizes="(max-width: 768px) 100vw, 60vw"

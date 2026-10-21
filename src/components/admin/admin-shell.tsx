@@ -92,7 +92,7 @@ export function AdminShell({
             E2
           </div>
           <div className="leading-none">
-            <p className="font-display text-base font-bold tracking-tight">ENOUEMENT</p>
+            <p className="font-display text-base font-bold tracking-tight">ÉNOUEMENT</p>
             <p className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground">2K27</p>
           </div>
         </Link>
@@ -173,7 +173,7 @@ export function AdminShell({
 
           <div className="hidden flex-1 sm:block">
             <p className="font-display text-sm font-semibold tracking-tight">
-              ENOUEMENT <span className="text-primary">2K27</span> Admin
+              ÉNOUEMENT <span className="text-primary">2K27</span> Admin
             </p>
           </div>
 
@@ -216,7 +216,7 @@ export function AdminShell({
         </main>
 
         <footer className="mt-auto border-t border-border/60 px-4 py-3 text-center text-[11px] text-muted-foreground sm:px-6">
-          ENOUEMENT 2K27 · Admin Console · <span className="text-primary/70">noindex</span>
+          ÉNOUEMENT 2K27 · Admin Console · <span className="text-primary/70">noindex</span>
         </footer>
       </div>
     </div>

@@ -164,7 +164,7 @@ export function Hero({
   }, [index, slides, reduced]);
 
   const safeSlides = slides.length > 0 ? slides : [
-    { id: "fallback", url: "/hero/hero-1.jpg", title: "Enouement", duration: 6000 },
+    { id: "fallback", url: "/hero/hero-1.jpg", title: "Énouement", duration: 6000 },
   ];
   const current = safeSlides[index % safeSlides.length];
   const slideTitle = current.title ?? "";
@@ -172,7 +172,7 @@ export function Hero({
   return (
     <section
       ref={sectionRef}
-      aria-label="Hero — Enouement 2K27"
+      aria-label="Hero — Énouement 2K27"
       className="relative flex min-h-[100svh] items-center overflow-hidden"
     >
       {/* ------------------------------------------------------------ */}
@@ -199,7 +199,7 @@ export function Hero({
             >
               <SmartImage
                 src={current.url}
-                alt={current.title ?? "Enouement hero"}
+                alt={current.title ?? "Énouement hero"}
                 fill
                 sizes="100vw"
                 cloudinaryWidth={1920}
@@ -208,7 +208,7 @@ export function Hero({
                 wrapperClassName="absolute inset-0"
                 className="object-cover"
                 seed={current.id}
-                fallbackLabel={current.title ?? "ENOUEMENT 2K27"}
+                fallbackLabel={current.title ?? "ÉNOUEMENT 2K27"}
               />
             </motion.div>
           </motion.div>

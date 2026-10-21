@@ -26,7 +26,7 @@ const schema = z.object({
 });
 
 const FIELDS: FieldConfig[] = [
-  { name: "siteName", label: "Site Name", type: "text", required: true, placeholder: "Enouement 2K27" },
+  { name: "siteName", label: "Site Name", type: "text", required: true, placeholder: "Énouement 2K27" },
   { name: "tagline", label: "Tagline", type: "text", placeholder: "The Final Chapter — Class of 2027" },
   { name: "description", label: "Description", type: "textarea", full: true, rows: 3 },
   { name: "footerText", label: "Footer Text", type: "text", full: true },

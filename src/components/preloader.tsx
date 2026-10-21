@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Cinematic smoky preloader for ENOUEMENT 2K27.
+ * Cinematic smoky preloader for ÉNOUEMENT 2K27.
  *
  * Layers (back → front):
  *   1. Canvas smoke — ~36 large soft drifting radial-gradient blobs in
@@ -13,7 +13,7 @@
  *   3. Extra film grain (in addition to the global body grain).
  *   4. Center column:
  *        - Pulsing E2 brand badge
- *        - Wordmark "ENOUEMENT / 2K27" (font-display, fluid clamp)
+ *        - Wordmark "ÉNOUEMENT / 2K27" (font-display, fluid clamp)
  *            · Outline + glow + flowing yellow→green→mint gradient fill
  *            · Per-letter blur→sharp materialize (stagger 0.05 s)
  *            · Single light sweep pass after letters resolve
@@ -40,10 +40,10 @@ import { useCallback, useEffect, useRef, useState } from "react";
 /*  Constants                                                          */
 /* ------------------------------------------------------------------ */
 
-const WORD_1 = "ENOUEMENT".split("");
+const WORD_1 = "ÉNOUEMENT".split("");
 const WORD_2 = "2K27".split("");
 
-const TAGLINES = ["Class of 2027", "The Final Chapter", "Ethiopia", "Enouement 2K27"];
+const TAGLINES = ["Class of 2027", "The Final Chapter", "Ethiopia", "Énouement 2K27"];
 const TAGLINE_INTERVAL = 600; // ms
 
 const TOTAL_DURATION = 2200; // ms — full mode
@@ -514,7 +514,7 @@ export function Preloader() {
         animate={{ opacity: exiting ? 0 : 1 }}
         transition={{ duration: EXIT_DURATION, ease: [0.76, 0, 0.24, 1] }}
         role="dialog"
-        aria-label="Loading Enouement 2K27"
+        aria-label="Loading Énouement 2K27"
       >
         {/* ---------- smoke / blobs / nothing ---------- */}
         {useCanvas && (

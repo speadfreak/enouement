@@ -25,7 +25,7 @@ export async function GET() {
     return NextResponse.json(
       {
         latestId: latest?.id ?? null,
-        latestCreatedAt: latest?.createdAt.toISOString() ?? null,
+        latestCreatedAt: latest?.createdAt ? new Date(latest.createdAt).toISOString() : null,
         latestPinned: latest?.pinned ?? false,
         count,
       },

@@ -12,7 +12,7 @@ export const revalidate = 60;
 export const metadata: Metadata = {
   title: "Contact",
   description:
-    "Reach out to the Enouement 2K27 batch — questions, partnerships, and hellos are all welcome.",
+    "Reach out to the Énouement 2K27 batch — questions, partnerships, and hellos are all welcome.",
 };
 
 export default async function ContactPage() {

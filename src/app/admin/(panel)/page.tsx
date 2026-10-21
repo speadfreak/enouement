@@ -56,7 +56,7 @@ export default async function DashboardPage() {
     <>
       <PageHeader
         title="Dashboard"
-        description={`Welcome back, ${user?.name || user?.email}. Here's what's happening with Enouement 2K27 today.`}
+        description={`Welcome back, ${user?.name || user?.email}. Here's what's happening with Énouement 2K27 today.`}
       />
 
       {/* Stat cards */}

@@ -24,7 +24,7 @@ export const revalidate = 300;
 /* ------------------------------------------------------------------ */
 /*  CTA Section — full-width gradient finale                          */
 /* ------------------------------------------------------------------ */
-function CTASection({ siteName = "Enouement 2K27" }: { siteName?: string }) {
+function CTASection({ siteName = "Énouement 2K27" }: { siteName?: string }) {
   return (
     <section
       aria-label="Enter the memory"
@@ -158,7 +158,7 @@ export default async function Home() {
       />
 
       <Marquee
-        text="CLASS OF 2027 · ETHIOPIA · ENOUEMENT 2K27"
+        text="CLASS OF 2027 · ETHIOPIA · ÉNOUEMENT 2K27"
         duration={32}
         className="border-y border-border/60 bg-background py-4"
       />

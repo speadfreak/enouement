@@ -153,7 +153,7 @@ export function StoryManager({ initial }: { initial: Chapter[] }) {
     <>
       <PageHeader
         title="Story Chapters"
-        description="The narrative chapters of the Enouement journey."
+        description="The narrative chapters of the Énouement journey."
         action={
           <Button onClick={() => setOpenCreate(true)} className="bg-primary text-primary-foreground hover:bg-primary/90">
             <Plus className="size-4" />

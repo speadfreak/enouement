@@ -11,7 +11,7 @@ import { getGraduation, getStudents } from "@/lib/data";
 export const revalidate = 60;
 
 export const metadata = {
-  title: "Graduation — Enouement 2K27",
+  title: "Graduation — Énouement 2K27",
   description:
     "The Walk. The robe. The moment. Countdown to our graduation day, the program, and our featured seniors.",
 };
@@ -24,7 +24,7 @@ export default async function GraduationPage() {
 
   const featured = students.filter((s) => s.featured);
   const countdownDate = graduation?.countdownDate
-    ? graduation.countdownDate.toISOString()
+    ? new Date(graduation.countdownDate).toISOString()
     : null;
 
   return (

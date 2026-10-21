@@ -16,7 +16,7 @@ export default async function SettingsPage() {
 
   return (
     <>
-      <PageHeader title="Site Settings" description="Global configuration for Enouement 2K27" />
+      <PageHeader title="Site Settings" description="Global configuration for Énouement 2K27" />
       <SettingsForm initial={initial} />
     </>
   );

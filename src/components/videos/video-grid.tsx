@@ -242,7 +242,7 @@ function PlayerDialog({
                   </DialogTitle>
                   <DialogDescription className="text-xs uppercase tracking-[0.3em] text-primary">
                     <Film className="mr-1 inline h-3 w-3" />
-                    {video.category} · Enouement 2K27
+                    {video.category} · Énouement 2K27
                   </DialogDescription>
                 </div>
                 <button

@@ -7,7 +7,7 @@ import { getStoryChapters } from "@/lib/data";
 export const revalidate = 60;
 
 export const metadata = {
-  title: "Our Story — Enouement 2K27",
+  title: "Our Story — Énouement 2K27",
   description:
     "The journey to 2K27 — a cinematic scroll through the chapters that shaped our senior batch.",
 };

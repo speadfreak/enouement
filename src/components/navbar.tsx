@@ -60,7 +60,7 @@ export function Navbar({ links = [], logoUrl, siteName }: { links?: NavLink[]; l
           <Link href="/" className="group flex shrink-0 items-center gap-2" aria-label="Home">
             {logoUrl ? (
               <span className="relative flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full shadow-lg">
-                <Image src={logoUrl} alt={siteName || "Enouement 2K27 logo"} fill sizes="36px" className="object-cover" />
+                <Image src={logoUrl} alt={siteName || "Énouement 2K27 logo"} fill sizes="36px" className="object-cover" />
               </span>
             ) : (
               <span className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary to-secondary text-primary-foreground shadow-lg">
@@ -69,7 +69,7 @@ export function Navbar({ links = [], logoUrl, siteName }: { links?: NavLink[]; l
               </span>
             )}
             <span className="font-display text-base font-extrabold tracking-tight sm:text-lg">
-              <span className="hidden min-[400px]:inline">ENOUEMENT</span>
+              <span className="hidden min-[400px]:inline">ÉNOUEMENT</span>
               <span className="min-[400px]:hidden">E2</span>
               <span className="text-primary">2K27</span>
             </span>
@@ -138,7 +138,7 @@ export function Navbar({ links = [], logoUrl, siteName }: { links?: NavLink[]; l
             />
             <div className="relative flex h-16 items-center justify-between px-4 safe-t">
               <span className="font-display text-lg font-extrabold">
-                ENOUEMENT<span className="text-primary">2K27</span>
+                ÉNOUEMENT<span className="text-primary">2K27</span>
               </span>
               <button
                 aria-label="Close menu"

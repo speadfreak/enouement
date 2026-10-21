@@ -12,7 +12,7 @@ const schema = z.object({
   mediaType: z.enum(["image", "video", "mixed"]).default("image"),
   pinned: z.boolean().default(false),
   published: z.boolean().default(true),
-  authorName: z.string().default("Enouement 2K27"),
+  authorName: z.string().default("Énouement 2K27"),
 });
 
 export async function GET() {

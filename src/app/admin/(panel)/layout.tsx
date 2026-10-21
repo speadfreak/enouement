@@ -5,8 +5,8 @@ import { AdminShell } from "@/components/admin/admin-shell";
 import { Role } from "@prisma/client";
 
 export const metadata: Metadata = {
-  title: { default: "Admin · Enouement 2K27", template: "%s · Admin · Enouement 2K27" },
-  description: "Enouement 2K27 admin console",
+  title: { default: "Admin · Énouement 2K27", template: "%s · Admin · Énouement 2K27" },
+  description: "Énouement 2K27 admin console",
   robots: { index: false, follow: false },
 };
 

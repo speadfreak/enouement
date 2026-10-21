@@ -156,7 +156,7 @@ function Card({
             alt={post.caption}
             fill
             seed={post.id}
-            fallbackLabel="Enouement 2K27"
+            fallbackLabel="Énouement 2K27"
             wrapperClassName="!absolute inset-0"
             className="object-cover transition-transform duration-700 group-hover:scale-105"
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"

@@ -11,10 +11,9 @@ export const revalidate = 60;
 export const metadata: Metadata = {
   title: "Cinema — Moving Memories",
   description:
-    "Moving memories from the Enouement 2K27 journey. Watch the moments that defined us — frame by frame.",
+    "Moving memories from the Énouement 2K27 journey. Watch the moments that defined us — frame by frame.",
 };
 
-export const dynamic = "force-dynamic";
 
 export default async function VideosPage() {
   const videos = await getVideos();
@@ -28,7 +27,7 @@ export default async function VideosPage() {
     category: v.category,
     duration: v.duration,
     featured: v.featured,
-    createdAt: v.createdAt.toISOString(),
+    createdAt: new Date(v.createdAt).toISOString(),
   }));
 
   return (

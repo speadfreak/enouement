@@ -15,7 +15,7 @@ export const revalidate = 60;
 export const metadata: Metadata = {
   title: "Announcements",
   description:
-    "News, announcements, and stories from the Enouement 2K27 senior batch.",
+    "News, announcements, and stories from the Énouement 2K27 senior batch.",
 };
 
 const MONTHS_SHORT = [

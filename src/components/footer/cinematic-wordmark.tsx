@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * FooterCinematicWordmark — the finale's giant outlined "ENOUEMENT 2K27".
+ * FooterCinematicWordmark — the finale's giant outlined "ÉNOUEMENT 2K27".
  *
  * The text starts as a muted outline (`-webkit-text-stroke`). As the user
  * scrolls toward the footer, the gradient fill rises from the bottom and
@@ -31,7 +31,7 @@ import {
 } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 
-const TEXT = "ENOUEMENT 2K27";
+const TEXT = "ÉNOUEMENT 2K27";
 
 const PRIMARY = "#ffe600";
 const SECONDARY = "#00c853";
@@ -226,7 +226,7 @@ export function FooterCinematicWordmark({ className = "" }: { className?: string
       <div
         ref={rootRef}
         className={`fcw-root ${className}`}
-        aria-label="ENOUEMENT 2K27"
+        aria-label="ÉNOUEMENT 2K27"
         role="heading"
         aria-level={2}
       >

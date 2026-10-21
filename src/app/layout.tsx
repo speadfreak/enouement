@@ -47,7 +47,7 @@ export async function generateMetadata(): Promise<Metadata> {
       };
 
   const ogImage = site?.ogImageUrl || "/og-image.png";
-  const siteName = site?.siteName || "Enouement 2K27";
+  const siteName = site?.siteName || "Énouement 2K27";
 
   return {
     metadataBase: new URL(baseUrl),
@@ -59,7 +59,7 @@ export async function generateMetadata(): Promise<Metadata> {
       site?.description ||
       "A cinematic memory of the senior batch, Class of 2027, Ethiopia.",
     keywords: [
-      "Enouement",
+      "Énouement",
       "2K27",
       "Class of 2027",
       "Ethiopia",

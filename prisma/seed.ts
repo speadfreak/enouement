@@ -7,7 +7,7 @@ import bcrypt from "bcryptjs";
 const db = new PrismaClient();
 
 async function main() {
-  console.log("🌱 Seeding Enouement 2K27...\n");
+  console.log("🌱 Seeding Énouement 2K27...\n");
 
   // --- Super admin ---
   // Credentials MUST come from env vars. Never hardcode defaults.
@@ -35,7 +35,7 @@ async function main() {
     update: {},
     create: {
       id: "site",
-      siteName: "Enouement 2K27",
+      siteName: "Énouement 2K27",
       tagline: "The Final Chapter — Class of 2027",
       description:
         "A cinematic memory of the senior batch. Every moment, every face, every story — preserved forever.",
@@ -54,7 +54,7 @@ async function main() {
         school: "Senior Secondary School",
         location: "Addis Ababa, Ethiopia",
       },
-      footerText: "Enouement 2K27 — Class of 2027. Crafted with obsession. 🟡🟢",
+      footerText: "Énouement 2K27 — Class of 2027. Crafted with obsession. 🟡🟢",
     },
   });
   console.log("  ✓ Site settings");
@@ -145,7 +145,7 @@ async function main() {
         ...posts[i],
         mediaType: "image",
         likeCount: Math.floor(Math.random() * 240) + 30,
-        authorName: "Enouement 2K27",
+        authorName: "Énouement 2K27",
         createdAt: new Date(Date.now() - i * 86400000 * 2),
       },
     });
@@ -182,7 +182,7 @@ async function main() {
   await db.merchItem.deleteMany({});
   await db.merchItem.create({
     data: {
-      name: "Enouement Senior Hoodie",
+      name: "Énouement Senior Hoodie",
       description: "The official senior batch hoodie. Premium heavyweight cotton, embroidered batch crest, and the year that changed everything.",
       price: 1500,
       imageUrls: ["/merch/hoodie-1.jpg", "/merch/hoodie-2.jpg", "/merch/hoodie-3.jpg"],
@@ -344,7 +344,7 @@ async function main() {
   await db.video.deleteMany({});
   await db.video.create({
     data: {
-      title: "Enouement 2K27 — Official Trailer",
+      title: "Énouement 2K27 — Official Trailer",
       description: "A year of memories, captured in motion.",
       url: "https://www.youtube.com/embed/dQw4w9WgXcQ",
       posterUrl: "/videos/video-1.jpg",
